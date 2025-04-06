@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Project</string>
+    <string name="title1">Sign Up</string>
+    <string name="title2">Sign in</string>
+    <string name="btn2">Sign In</string>
+    <string name="btn1">Sign Up</string>
+
+
+    <string name="fullName">Full Name</string>
+    <string name="familyName">Family Name</string>
+    <string name="date">Date of Birth</string>
+    <string name="Email">Email</string>
+    <string name="password">Password</string>
+    <string name="phone">Phone Number</string>
+
+
+</resources>
