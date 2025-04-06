@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg2"
+    tools:context=".SignUp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="71dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="71dp"
+        app:cardBackgroundColor="@color/orangeLighter"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:fontFamily="cursive"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:text="@string/title1"
+                android:textColor="@color/white"
+
+                android:textSize="50sp"
+
+
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edFullName"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="15dp"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/person"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/fullName"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/edBirthData"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/date"
+
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/date"
+                android:inputType="date"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edPhoneNum"
+                android:layout_width="match_parent"
+                android:layout_height="67dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/phone"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/phone"
+                android:inputType="phone"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edEmail"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/email"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/Email"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editTextTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/password"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="318dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="@color/white"
+                android:fontFamily="casual"
+                android:text="@string/btn1"
+                android:textColor="@color/orangeLight"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
