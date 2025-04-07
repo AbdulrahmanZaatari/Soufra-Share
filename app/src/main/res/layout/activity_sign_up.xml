@@ -30,7 +30,6 @@
             android:orientation="vertical">
 
             <TextView
-
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="75dp"
@@ -39,10 +38,7 @@
                 android:paddingLeft="10dp"
                 android:text="@string/title1"
                 android:textColor="@color/white"
-
                 android:textSize="50sp"
-
-
                 android:textStyle="bold" />
 
             <EditText
@@ -61,10 +57,8 @@
                 android:paddingLeft="10dp"
                 android:textColor="@color/orangeLighter"
                 android:textColorHint="@color/orangeLight"
-
                 android:textSize="20sp"
                 android:textStyle="bold" />
-
 
             <EditText
                 android:id="@+id/edBirthData"
@@ -73,7 +67,6 @@
                 android:layout_margin="10dp"
                 android:background="@color/white"
                 android:drawableLeft="@drawable/date"
-
                 android:drawablePadding="10dp"
                 android:ems="10"
                 android:fontFamily="casual"
@@ -82,7 +75,6 @@
                 android:paddingLeft="10dp"
                 android:textColor="@color/orangeLighter"
                 android:textColorHint="@color/orangeLight"
-
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -101,7 +93,23 @@
                 android:paddingLeft="10dp"
                 android:textColor="@color/orangeLighter"
                 android:textColorHint="@color/orangeLight"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
+            <EditText
+                android:id="@+id/edUsername"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/username"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -120,7 +128,6 @@
                 android:paddingLeft="10dp"
                 android:textColor="@color/orangeLighter"
                 android:textColorHint="@color/orangeLight"
-
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -136,6 +143,40 @@
                 android:fontFamily="casual"
                 android:hint="@string/password"
                 android:inputType="textPassword"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edLocation"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/location"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:textColor="@color/orangeLighter"
+                android:textColorHint="@color/orangeLight"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edNationalId"
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"
+                android:drawablePadding="10dp"
+                android:ems="10"
+                android:fontFamily="casual"
+                android:hint="@string/national_id"
+                android:inputType="text"
                 android:paddingLeft="10dp"
                 android:textColor="@color/orangeLighter"
                 android:textColorHint="@color/orangeLight"

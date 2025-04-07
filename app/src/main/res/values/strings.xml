@@ -12,6 +12,10 @@
     <string name="Email">Email</string>
     <string name="password">Password</string>
     <string name="phone">Phone Number</string>
+    <string name="username">Username</string>
+    <string name="location">Location</string>
+    <string name="national_id">National ID</string>
+    <string name="dont_have_account">Don\'t have account? Sign up here!</string>
 
 
 </resources>
