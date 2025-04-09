@@ -33,6 +33,7 @@ android {
 
 dependencies {
     implementation(libs.volley)
+    implementation(libs.picasso)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

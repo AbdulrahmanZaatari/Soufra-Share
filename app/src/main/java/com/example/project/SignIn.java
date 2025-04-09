@@ -14,12 +14,24 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class SignIn extends AppCompatActivity {
 
     private EditText edEmail, editTextTextPassword;
     private Button btnSignIn, btnSignUpRedirect;
     private static final String PREF_NAME = "MyAppPrefs";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+    private RequestQueue requestQueue;
+    private static final String URL_SIGNIN = "http://10.0.2.2/soufra_share/users.php?action=signin"; // Updated URL
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +45,11 @@ public class SignIn extends AppCompatActivity {
         });
 
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        requestQueue = Volley.newRequestQueue(this);
 
         edEmail = findViewById(R.id.edEmail);
         editTextTextPassword = findViewById(R.id.editTextTextPassword);
-        btnSignIn = findViewById(R.id.btnSignIp);
+        btnSignIn = findViewById(R.id.btnSignIn);
         btnSignUpRedirect = findViewById(R.id.btnSignUpRedirect);
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
@@ -50,15 +63,50 @@ public class SignIn extends AppCompatActivity {
                     return;
                 }
 
-                // For now, we'll simulate a successful login
-                SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
-                editor.putBoolean(KEY_IS_LOGGED_IN, true);
-                editor.apply(); // Or editor.commit()
+                JSONObject requestBody = new JSONObject();
+                try {
+                    requestBody.put("email", email);
+                    requestBody.put("password", password);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return;
+                }
 
-                // Navigate to MainActivity
-                Intent intent = new Intent(SignIn.this, MainActivity.class);
-                startActivity(intent);
-                finish(); // Close SignIn activity
+                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_SIGNIN, requestBody,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    boolean success = response.getBoolean("success");
+                                    String message = response.getString("message");
+
+                                    if (success) {
+                                        // Sign-in successful, update SharedPreferences and navigate to MainActivity
+                                        SharedPreferences.Editor editor = getSharedPreferences(PREF_NAME, MODE_PRIVATE).edit();
+                                        editor.putBoolean(KEY_IS_LOGGED_IN, true);
+                                        editor.apply();
+                                        startActivity(new Intent(SignIn.this, MainActivity.class));
+                                        finish();
+                                    } else {
+                                        // Sign-in failed, show an error message
+                                        Toast.makeText(SignIn.this, message, Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(SignIn.this, "Error parsing response: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                                Toast.makeText(SignIn.this, "Sign-in failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                requestQueue.add(request);
             }
         });
 
