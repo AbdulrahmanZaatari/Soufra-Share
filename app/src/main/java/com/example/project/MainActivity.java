@@ -28,7 +28,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.StringRequest;
+// Removed unused StringRequest import
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -40,11 +40,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit; // Import TimeUnit
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String PREF_NAME = "MyAppPrefs";
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+    private static final String KEY_LOGIN_TIMESTAMP = "loginTimestamp";
+    private static final long SESSION_TIMEOUT_MS = TimeUnit.HOURS.toMillis(1); // 1 hour in milliseconds
+
     private RecyclerView ordersRecyclerView;
     private MealAdapter mealAdapter;
     private List<Meal> mealList;
@@ -66,13 +69,20 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
 
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        boolean isLoggedIn = prefs.getBoolean(KEY_IS_LOGGED_IN, false);
+        long loginTimestamp = prefs.getLong(KEY_LOGIN_TIMESTAMP, -1);
+        long currentTime = System.currentTimeMillis();
 
-        if (!isLoggedIn) {
+        // Check if timestamp exists and is within the timeout period
+        if (loginTimestamp == -1 || (currentTime - loginTimestamp > SESSION_TIMEOUT_MS)) {
+            // Session expired or user not logged in
+            // Clear any potentially stale timestamp
+            prefs.edit().remove(KEY_LOGIN_TIMESTAMP).apply();
+
             Intent intent = new Intent(this, SignIn.class);
             startActivity(intent);
             finish();
         } else {
+            // Session is valid, proceed to load MainActivity
             setContentView(R.layout.activity_main);
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -80,145 +90,142 @@ public class MainActivity extends AppCompatActivity {
                 return insets;
             });
 
-            ordersRecyclerView = findViewById(R.id.orders_recycler_view);
-            ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mealList = new ArrayList<>();
-            originalMealList = new ArrayList<>();
-            mealAdapter = new MealAdapter(mealList);
-            ordersRecyclerView.setAdapter(mealAdapter);
-
-            searchBar = findViewById(R.id.search_bar);
-            filterButton = findViewById(R.id.filter_button);
-            bottomNavigationView = findViewById(R.id.bottom_navigation);
-            allTags = new ArrayList<>();
+            initializeViews();
+            setupRecyclerView();
+            setupSearchBar();
+            setupFilterButton();
+            setupBottomNavigation();
 
             requestQueue = Volley.newRequestQueue(this);
-            fetchMeals();
-            fetchTags(); // Fetch tags for filtering
-
-            searchBar.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    currentQuery = s.toString();
-                    applyFilters();
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
-            });
-
-            filterButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showFilterDialog();
-                }
-            });
-
-            bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    int id = item.getItemId();
-                    if (id == R.id.navigation_orders) {
-                        return true;
-                    } else if (id == R.id.navigation_postings) {
-                        Intent intent = new Intent(MainActivity.this, PostingsActivity.class);
-                        startActivity(intent);
-                        return true;
-                    } else if (id == R.id.navigation_dashboard) {
-                        Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                        startActivity(intent);
-                        return true;
-                    }
-                    return false;
-                }
-            });
+            fetchTags();
+            fetchMeals(); // Fetch meals (which will then be filtered)
         }
     }
 
-    private void fetchMeals() {
-        String url = "http://10.0.2.2/Soufra_Share/meals.php?action=getAllWithUserDetails";
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            mealList.clear();
-                            originalMealList.clear();
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject mealObject = response.getJSONObject(i);
-                                Meal meal = new Meal(
-                                        mealObject.getInt("meal_id"),
-                                        mealObject.getInt("user_id"),
-                                        mealObject.getString("name"),
-                                        mealObject.getDouble("price"),
-                                        mealObject.getInt("quantity"),
-                                        mealObject.getString("location"),
-                                        mealObject.getInt("delivery_option"),
-                                        mealObject.getString("description"),
-                                        mealObject.getString("image_paths"),
-                                        mealObject.getString("created_at"),
-                                        mealObject.getString("username"),
-                                        mealObject.getString("profile_picture"),
-                                        mealObject.getDouble("rating")
-                                );
-                                mealList.add(meal);
-                                originalMealList.add(meal);
-                            }
-                            applyFilters(); // Apply current filters after fetching new data
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(MainActivity.this, "Error parsing JSON", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+    private void initializeViews() {
+        ordersRecyclerView = findViewById(R.id.orders_recycler_view);
+        searchBar = findViewById(R.id.search_bar);
+        filterButton = findViewById(R.id.filter_button);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        allTags = new ArrayList<>();
+        mealList = new ArrayList<>();
+        originalMealList = new ArrayList<>();
+    }
+
+    private void setupRecyclerView() {
+        ordersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mealAdapter = new MealAdapter(mealList);
+        ordersRecyclerView.setAdapter(mealAdapter);
+    }
+
+    private void setupSearchBar() {
+        searchBar.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error fetching meals", Toast.LENGTH_SHORT).show();
-                Log.e("Volley Error", error.toString());
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentQuery = s.toString();
+                applyFilters();
             }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void setupFilterButton() {
+        filterButton.setOnClickListener(v -> {
+            // Ensure tags are loaded before showing dialog
+            if (tagNames != null && tagNames.length > 0) {
+                showFilterDialog();
+            } else {
+                Toast.makeText(MainActivity.this, "Loading filters...", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupBottomNavigation() {
+        bottomNavigationView.setSelectedItemId(R.id.navigation_orders);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.navigation_orders) {
+                return true;
+            } else if (id == R.id.navigation_postings) {
+                Intent intent = new Intent(MainActivity.this, PostingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                return true;
+            } else if (id == R.id.navigation_dashboard) {
+                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    // --- Data Fetching ---
+    private void fetchMeals() {
+        // Fetch all meals initially, applyFilters will handle the actual display logic
+        String url = "http://10.0.2.2/Soufra_Share/meals.php?action=getAllWithUserDetails";
+        Log.d("FetchMeals", "Fetching all meals from: " + url); // Log URL
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
+                response -> {
+                    Log.d("FetchMeals", "Received response: " + response.length() + " items");
+                    try {
+                        originalMealList.clear(); // Clear original list before populating
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject mealObject = response.getJSONObject(i);
+                            Meal meal = parseMeal(mealObject);
+                            originalMealList.add(meal); // Add to the original list
+                        }
+                        // Apply filters which will populate mealList and update adapter
+                        applyFilters();
+                        Log.d("FetchMeals", "Finished parsing meals. Original list size: " + originalMealList.size());
+                    } catch (JSONException e) {
+                        Log.e("FetchMeals", "JSON parsing error", e);
+                        Toast.makeText(MainActivity.this, "Error parsing meal data", Toast.LENGTH_SHORT).show();
+                    }
+                }, error -> {
+            Log.e("FetchMeals", "Volley error fetching meals", error);
+            Toast.makeText(MainActivity.this, "Error fetching meals: " + error.getMessage(), Toast.LENGTH_LONG).show();
         });
         requestQueue.add(request);
     }
 
     private void fetchTags() {
         String url = "http://10.0.2.2/Soufra_Share/tags.php";
+        Log.d("FetchTags", "Fetching tags from: " + url);
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            allTags.clear();
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject tagObject = response.getJSONObject(i);
-                                allTags.add(new Tag(tagObject.getInt("tag_id"), tagObject.getString("name")));
-                            }
-                            tagNames = new String[allTags.size()];
-                            for (int i = 0; i < allTags.size(); i++) {
-                                tagNames[i] = allTags.get(i).getName();
-                            }
-                            selectedTags = new boolean[allTags.size()];
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(MainActivity.this, "Error parsing tags", Toast.LENGTH_SHORT).show();
+                response -> {
+                    Log.d("FetchTags", "Received response: " + response.length() + " tags");
+                    try {
+                        allTags.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject tagObject = response.getJSONObject(i);
+                            allTags.add(new Tag(tagObject.getInt("tag_id"), tagObject.getString("name")));
                         }
+                        tagNames = new String[allTags.size()];
+                        for (int i = 0; i < allTags.size(); i++) {
+                            tagNames[i] = allTags.get(i).getName();
+                        }
+                        // Initialize selectedTags based on the fetched count
+                        selectedTags = new boolean[allTags.size()];
+                        Log.d("FetchTags", "Finished parsing tags. Count: " + allTags.size());
+                    } catch (JSONException e) {
+                        Log.e("FetchTags", "JSON parsing error", e);
+                        Toast.makeText(MainActivity.this, "Error parsing tags", Toast.LENGTH_SHORT).show();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error fetching tags", Toast.LENGTH_SHORT).show();
-                Log.e("Volley Error", error.toString());
-            }
+                }, error -> {
+            Log.e("FetchTags", "Volley error fetching tags", error);
+            Toast.makeText(MainActivity.this, "Error fetching tags: " + error.getMessage(), Toast.LENGTH_LONG).show();
         });
         requestQueue.add(request);
     }
 
+    // --- Filtering Logic ---
     private void showFilterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Filter By");
@@ -229,159 +236,221 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setView(filterView);
 
-        // Set existing price filter values if available
-        if (currentPriceFilter.startsWith("Under $")) {
-            maxPriceEditText.setText("10");
-        } else if (currentPriceFilter.equals("$10 - $20")) {
-            minPriceEditText.setText("10");
-            maxPriceEditText.setText("20");
-        } else if (currentPriceFilter.equals("$20 - $50")) {
-            minPriceEditText.setText("20");
-            maxPriceEditText.setText("50");
-        } else if (currentPriceFilter.equals("Over $50")) {
-            minPriceEditText.setText("50");
-        }
-
-        builder.setMultiChoiceItems(tagNames, selectedTags, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                selectedTags[which] = isChecked;
-            }
+        // Pre-fill price fields based on currentPriceFilter
+        parseAndSetPriceFilter(minPriceEditText, maxPriceEditText);
+        // Clone selectedTags for the dialog to avoid modifying the actual state until "Apply" is clicked
+        boolean[] dialogSelectedTags = selectedTags.clone();
+        builder.setMultiChoiceItems(tagNames, dialogSelectedTags, (dialog, which, isChecked) -> {
+            dialogSelectedTags[which] = isChecked;
         });
 
-        builder.setPositiveButton("Apply", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                StringBuilder selectedTagsString = new StringBuilder();
-                for (int i = 0; i < selectedTags.length; i++) {
-                    if (selectedTags[i]) {
-                        if (selectedTagsString.length() > 0) {
-                            selectedTagsString.append(",");
-                        }
-                        selectedTagsString.append(allTags.get(i).getTagId());
+        builder.setPositiveButton("Apply", (dialog, which) -> {
+            // Apply changes from the dialog to the actual state
+            selectedTags = dialogSelectedTags; // Update the main selectedTags array
+
+            StringBuilder selectedTagsString = new StringBuilder();
+            for (int i = 0; i < selectedTags.length; i++) {
+                if (selectedTags[i]) {
+                    if (selectedTagsString.length() > 0) {
+                        selectedTagsString.append(",");
                     }
+                    selectedTagsString.append(allTags.get(i).getTagId());
                 }
-                currentTagFilter = selectedTagsString.toString();
-
-                String minPrice = minPriceEditText.getText().toString().trim();
-                String maxPrice = maxPriceEditText.getText().toString().trim();
-
-                if (!minPrice.isEmpty() && !maxPrice.isEmpty()) {
-                    currentPriceFilter = minPrice + "-" + maxPrice;
-                } else if (!minPrice.isEmpty()) {
-                    currentPriceFilter = "Over $" + minPrice;
-                } else if (!maxPrice.isEmpty()) {
-                    currentPriceFilter = "Under $" + maxPrice;
-                } else {
-                    currentPriceFilter = ""; // Clear price filter
-                }
-
-                applyFilters();
             }
+            currentTagFilter = selectedTagsString.toString();
+
+            // Read price fields and update currentPriceFilter
+            String minPrice = minPriceEditText.getText().toString().trim();
+            String maxPrice = maxPriceEditText.getText().toString().trim();
+            updateCurrentPriceFilter(minPrice, maxPrice);
+
+            applyFilters(); // Re-apply filters with new settings
         });
         builder.setNegativeButton("Cancel", null);
+        builder.setNeutralButton("Clear Filters", (dialog, which) -> {
+            currentQuery = "";
+            currentTagFilter = "";
+            currentPriceFilter = "";
+            searchBar.setText("");
+            selectedTags = new boolean[allTags.size()];
+            applyFilters();
+            Toast.makeText(MainActivity.this, "Filters Cleared", Toast.LENGTH_SHORT).show();
+        });
+
 
         builder.show();
     }
 
-    private void applyFilters() {
-        mealList.clear();
-        String url = "http://10.0.2.2/Soufra_Share/meals.php?action=filter";
-        Map<String, String> params = new HashMap<>();
-        boolean hasFilter = false;
+    private void parseAndSetPriceFilter(EditText minPriceEditText, EditText maxPriceEditText) {
+        // Clear fields first
+        minPriceEditText.setText("");
+        maxPriceEditText.setText("");
 
-        if (!currentQuery.isEmpty()) {
-            params.put("query", currentQuery);
-            hasFilter = true;
+        if (currentPriceFilter == null || currentPriceFilter.isEmpty()) {
+            return;
         }
-        if (!currentTagFilter.isEmpty()) {
-            params.put("tags", currentTagFilter);
-            hasFilter = true;
-        }
-        if (!currentPriceFilter.isEmpty()) {
+
+        try {
             if (currentPriceFilter.startsWith("Under $")) {
-                String maxPrice = currentPriceFilter.substring(7);
-                params.put("maxPrice", maxPrice);
+                maxPriceEditText.setText(currentPriceFilter.substring(7).trim());
             } else if (currentPriceFilter.startsWith("Over $")) {
-                String minPrice = currentPriceFilter.substring(6);
-                params.put("minPrice", minPrice);
+                minPriceEditText.setText(currentPriceFilter.substring(6).trim());
             } else if (currentPriceFilter.contains("-")) {
                 String[] prices = currentPriceFilter.split("-");
                 if (prices.length == 2) {
-                    try {
-                        double minPrice = Double.parseDouble(prices[0]);
-                        double maxPrice = Double.parseDouble(prices[1]);
-                        params.put("minPrice", String.valueOf(minPrice));
-                        params.put("maxPrice", String.valueOf(maxPrice));
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "Invalid price range format", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                    minPriceEditText.setText(prices[0].trim());
+                    maxPriceEditText.setText(prices[1].trim());
                 }
             }
-            hasFilter = true;
+        } catch (Exception e) {
+            Log.e("FilterDialog", "Error parsing existing price filter", e);
+            currentPriceFilter = "";
         }
+    }
 
-        StringBuilder urlBuilder = new StringBuilder(url);
+    private void updateCurrentPriceFilter(String minPrice, String maxPrice) {
+        boolean hasMin = !minPrice.isEmpty();
+        boolean hasMax = !maxPrice.isEmpty();
 
-        if (hasFilter) {
-            urlBuilder.append("&");
-            List<String> paramList = new ArrayList<>();
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                paramList.add(entry.getKey() + "=" + entry.getValue());
+        if (hasMin && hasMax) {
+            try {
+                Double.parseDouble(minPrice);
+                Double.parseDouble(maxPrice);
+                currentPriceFilter = minPrice + "-" + maxPrice;
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid number format in price", Toast.LENGTH_SHORT).show();
+                currentPriceFilter = "";
             }
-            urlBuilder.append(String.join("&", paramList));
+        } else if (hasMin) {
+            try {
+                Double.parseDouble(minPrice);
+                currentPriceFilter = "Over $" + minPrice;
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid number format in min price", Toast.LENGTH_SHORT).show();
+                currentPriceFilter = ""; // Clear filter on error
+            }
+        } else if (hasMax) {
+            try {
+                Double.parseDouble(maxPrice);
+                currentPriceFilter = "Under $" + maxPrice;
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid number format in max price", Toast.LENGTH_SHORT).show();
+                currentPriceFilter = "";
+            }
         } else {
-            // If no filters are applied, fetch all meals
-            urlBuilder = new StringBuilder("http://10.0.2.2/Soufra_Share/meals.php?action=getAllWithUserDetails");
+            currentPriceFilter = "";
         }
+        Log.d("FilterDialog", "Updated currentPriceFilter: " + currentPriceFilter);
+    }
 
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, urlBuilder.toString(), null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            mealList.clear();
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject mealObject = response.getJSONObject(i);
-                                Meal meal = new Meal(
-                                        mealObject.getInt("meal_id"),
-                                        mealObject.getInt("user_id"),
-                                        mealObject.getString("name"),
-                                        mealObject.getDouble("price"),
-                                        mealObject.getInt("quantity"),
-                                        mealObject.getString("location"),
-                                        mealObject.getInt("delivery_option"),
-                                        mealObject.getString("description"),
-                                        mealObject.getString("image_paths"),
-                                        mealObject.getString("created_at"),
-                                        mealObject.getString("username"),
-                                        mealObject.getString("profile_picture"),
-                                        mealObject.getDouble("rating")
-                                );
-                                mealList.add(meal);
-                            }
-                            mealAdapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(MainActivity.this, "Error parsing filtered meals", Toast.LENGTH_SHORT).show();
+
+    private void applyFilters() {
+        Map<String, String> params = new HashMap<>();
+        boolean hasFilter = false;
+        String baseUrl = "http://10.0.2.2/Soufra_Share/meals.php";
+        String action = "getAllWithUserDetails"; // Default action
+
+        if (!currentQuery.isEmpty() || !currentTagFilter.isEmpty() || !currentPriceFilter.isEmpty()) {
+            action = "filter";
+            hasFilter = true;
+            Log.d("ApplyFilters", "Applying filters: Query='" + currentQuery + "', Tags='" + currentTagFilter + "', Price='" + currentPriceFilter + "'");
+
+            if (!currentQuery.isEmpty()) {
+                params.put("query", currentQuery);
+            }
+            if (!currentTagFilter.isEmpty()) {
+                params.put("tags", currentTagFilter);
+            }
+            if (!currentPriceFilter.isEmpty()) {
+                try {
+                    if (currentPriceFilter.startsWith("Under $")) {
+                        params.put("maxPrice", currentPriceFilter.substring(7).trim());
+                    } else if (currentPriceFilter.startsWith("Over $")) {
+                        params.put("minPrice", currentPriceFilter.substring(6).trim());
+                    } else if (currentPriceFilter.contains("-")) {
+                        String[] prices = currentPriceFilter.split("-");
+                        if (prices.length == 2) {
+                            params.put("minPrice", String.valueOf(Double.parseDouble(prices[0].trim())));
+                            params.put("maxPrice", String.valueOf(Double.parseDouble(prices[1].trim())));
                         }
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error fetching filtered meals", Toast.LENGTH_SHORT).show();
-                Log.e("Volley Error", error.toString());
+                } catch (NumberFormatException e) {
+                    Log.e("ApplyFilters", "Invalid price range format during filter application: " + currentPriceFilter, e);
+                    Toast.makeText(this, "Invalid price filter format, ignoring price.", Toast.LENGTH_SHORT).show();
+                    params.remove("minPrice");
+                    params.remove("maxPrice");
+                }
             }
+        } else {
+            Log.d("ApplyFilters", "No filters applied, fetching all meals.");
+        }
+
+        // Build URL with parameters
+        StringBuilder urlBuilder = new StringBuilder(baseUrl);
+        urlBuilder.append("?action=").append(action);
+        if (hasFilter) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                try {
+                    // Basic URL encoding for parameter values (safer for Volley)
+                    urlBuilder.append("&").append(entry.getKey()).append("=").append(java.net.URLEncoder.encode(entry.getValue(), "UTF-8"));
+                } catch (java.io.UnsupportedEncodingException e) {
+                    Log.e("ApplyFilters", "URL Encoding failed", e);
+                }
+            }
+        }
+
+        String finalUrl = urlBuilder.toString();
+        Log.d("ApplyFilters", "Requesting URL: " + finalUrl);
+
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, finalUrl, null,
+                response -> {
+                    Log.d("ApplyFilters", "Received filtered response: " + response.length() + " items");
+                    try {
+                        mealList.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject mealObject = response.getJSONObject(i);
+                            mealList.add(parseMeal(mealObject));
+                        }
+                        mealAdapter.notifyDataSetChanged(); // Update the RecyclerView
+                        Log.d("ApplyFilters", "Adapter notified. Displaying " + mealList.size() + " meals.");
+                    } catch (JSONException e) {
+                        Log.e("ApplyFilters", "JSON parsing error on filtered results", e);
+                        Toast.makeText(MainActivity.this, "Error parsing filtered meals", Toast.LENGTH_SHORT).show();
+                    }
+                }, error -> {
+            Log.e("ApplyFilters", "Volley error fetching filtered meals", error);
+            Toast.makeText(MainActivity.this, "Error fetching filtered meals: " + error.getMessage(), Toast.LENGTH_LONG).show();
+            mealList.clear();
+            mealAdapter.notifyDataSetChanged();
         });
         requestQueue.add(request);
     }
-    // Inner class for Tag
+
+
+    private Meal parseMeal(JSONObject mealObject) throws JSONException {
+        // Use optString, optInt, optDouble to handle potential missing fields gracefully
+        return new Meal(
+                mealObject.optInt("meal_id"),
+                mealObject.optInt("user_id"),
+                mealObject.optString("name", "N/A"),
+                mealObject.optDouble("price", 0.0),
+                mealObject.optInt("quantity", 0),
+                mealObject.optString("location", ""),
+                mealObject.optInt("delivery_option", -1),
+                mealObject.optString("description", ""),
+                mealObject.optString("image_paths", ""),
+                mealObject.optString("created_at", ""),
+                mealObject.optString("username", "Unknown User"),
+                mealObject.optString("profile_picture", ""),
+                mealObject.optDouble("rating", 0.0)
+        );
+    }
+
+
+    // --- Inner class for Tag ---
     private static class Tag {
-        private int tagId;
-        private String name;
+        private final int tagId;
+        private final String name;
 
         public Tag(int tagId, String name) {
             this.tagId = tagId;
@@ -394,6 +463,12 @@ public class MainActivity extends AppCompatActivity {
 
         public String getName() {
             return name;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return name + " (ID: " + tagId + ")";
         }
     }
 }

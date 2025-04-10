@@ -1,6 +1,9 @@
 package com.example.project;
 
-public class Meal {
+import java.io.Serializable; // Import Serializable
+
+// Implement Serializable
+public class Meal implements Serializable {
     private int mealId;
     private int userId;
     private String name;
@@ -31,7 +34,23 @@ public class Meal {
         this.rating = rating;
     }
 
-    // Add getters for all the fields
+    public Meal(int mealId, int userId, String name, double price, int quantity, String location, int deliveryOption, String description, String imagePaths, String createdAt) {
+        this.mealId = mealId;
+        this.userId = userId;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.location = location;
+        this.deliveryOption = deliveryOption;
+        this.description = description;
+        this.imagePaths = imagePaths;
+        this.createdAt = createdAt;
+        this.username = null;
+        this.profilePicture = null;
+        this.rating = 0.0;
+    }
+
+
     public int getMealId() {
         return mealId;
     }
@@ -83,4 +102,5 @@ public class Meal {
     public double getRating() {
         return rating;
     }
+
 }
