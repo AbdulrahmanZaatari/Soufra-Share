@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <ImageView
+            android:id="@+id/image_view_posting"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="meal_image" />
+        <TextView
+            android:id="@+id/text_view_posting_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:layout_constraintStart_toEndOf="@+id/image_view_posting"
+            app:layout_constraintTop_toTopOf="@+id/image_view_posting"
+            app:layout_constraintEnd_toStartOf="@+id/button_edit_posting"
+            android:layout_marginEnd="8dp"
+            tools:text="Delicious Pasta Carbonara" />
+
+        <TextView
+            android:id="@+id/text_view_posting_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="@color/orangeLight"
+            app:layout_constraintStart_toStartOf="@+id/text_view_posting_name"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_posting_name"
+            tools:text="$12.99" />
+
+        <TextView
+            android:id="@+id/text_view_posting_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintStart_toEndOf="@+id/text_view_posting_price"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_posting_name"
+            tools:text="Qty: 5" />
+
+        <TextView
+            android:id="@+id/text_view_posting_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintTop_toBottomOf="@+id/image_view_posting"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="A classic Roman pasta dish made with eggs, hard cheese, cured pork, and black pepper. Very tasty and fulfilling..." />
+
+        <ImageButton
+            android:id="@+id/button_edit_posting"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="edit"
+            android:src="@drawable/ic_person"
+            app:tint="?attr/colorControlNormal"
+            app:layout_constraintEnd_toStartOf="@+id/button_delete_posting"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="4dp"/>
+        <ImageButton
+            android:id="@+id/button_delete_posting"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="delete"
+            android:src="@drawable/ic_person"
+            app:tint="@color/design_default_color_error"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
