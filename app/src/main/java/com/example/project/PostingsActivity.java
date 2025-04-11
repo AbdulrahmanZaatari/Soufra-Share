@@ -30,7 +30,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -200,30 +202,21 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
 
 
     private void deletePosting(final Meal meal, final int position) {
-        String url = BASE_URL + "meals.php"; // DELETE uses base URL, sends ID in body
+        String url = BASE_URL + "meals.php?meal_id=" + meal.getMealId(); // Append meal_id to the URL
         Log.d(TAG, "Attempting to delete meal ID: " + meal.getMealId() + " at URL: " + url);
 
-        JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put("meal_id", meal.getMealId());
-        } catch (JSONException e) {
-            Log.e(TAG, "JSONException creating delete request body", e);
-            Toast.makeText(this, "Error creating delete request", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        JsonObjectRequest deleteRequest = new JsonObjectRequest(Request.Method.DELETE, url, requestBody,
+        StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, url,
                 response -> {
-                    Log.d(TAG, "Delete Response: " + response.toString());
+                    Log.d(TAG, "Delete Response: " + response);
                     try {
-                        String message = response.optString("message", "Posting deleted successfully."); // Default success message
+                        JSONObject responseObject = new JSONObject(response);
+                        String message = responseObject.optString("message", "Posting deleted successfully.");
                         Toast.makeText(PostingsActivity.this, message, Toast.LENGTH_SHORT).show();
                         postingAdapter.removeItem(position);
                         checkEmptyState();
-
-                    } catch (Exception e) {
-                        Log.e(TAG, "Error processing delete response", e);
-                        Toast.makeText(PostingsActivity.this, "Deletion successful (response parsing issue).", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing JSON response", e);
+                        Toast.makeText(this, "Deletion successful (response parsing issue).", Toast.LENGTH_SHORT).show();
                         postingAdapter.removeItem(position);
                         checkEmptyState();
                     }
