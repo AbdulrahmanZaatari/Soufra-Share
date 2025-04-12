@@ -17,11 +17,22 @@
             android:id="@+id/profile_image"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:clickable="true"
-            android:focusable="true" />
-            <!--tools:src="@drawable/ic_person"-->
+            android:focusable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <!--tools:src="@drawable/ic_person"-->
+
+        <ImageView
+            android:id="@+id/meal_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/meal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/username_text"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/username_text"
@@ -39,8 +50,8 @@
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numStars="5"
             android:isIndicator="true"
+            android:numStars="5"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toBottomOf="@+id/username_text"
             tools:rating="3.5" />
@@ -49,55 +60,60 @@
             android:id="@+id/meal_name_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/meal_image"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image"
             tools:text="Meal Name" />
 
         <TextView
             android:id="@+id/meal_description_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            android:maxLines="2"
             android:ellipsize="end"
-            app:layout_constraintTop_toBottomOf="@+id/meal_name_text"
-            app:layout_constraintStart_toStartOf="parent"
+            android:maxLines="2"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/meal_image"
+            app:layout_constraintTop_toBottomOf="@+id/meal_name_text"
             tools:text="Short description of the meal" />
 
         <TextView
             android:id="@+id/meal_price_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/meal_image"
             app:layout_constraintTop_toBottomOf="@+id/meal_description_text"
-            app:layout_constraintStart_toStartOf="parent"
             tools:text="$10.00" />
 
         <TextView
             android:id="@+id/meal_location_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/meal_price_text"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/meal_image"
+            app:layout_constraintTop_toBottomOf="@+id/meal_price_text"
             tools:text="Location" />
 
         <TextView
             android:id="@+id/meal_delivery_option_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/meal_image"
             app:layout_constraintTop_toBottomOf="@+id/meal_location_text"
-            app:layout_constraintStart_toStartOf="parent"
             tools:text="Delivery/Pickup" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

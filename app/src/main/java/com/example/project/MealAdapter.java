@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +42,26 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         holder.mealLocationText.setText("Location: " + currentMeal.getLocation());
         holder.mealDeliveryOptionText.setText("Delivery: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
 
+        // Placeholder for image loading
+        holder.mealImageView.setImageResource(R.drawable.meal);
+
         if (currentMeal.getProfilePicture() != null && !currentMeal.getProfilePicture().isEmpty()) {
-            Picasso.get().load(currentMeal.getProfilePicture()).placeholder(R.drawable.ic_person).into(holder.profileImage);
+            // Placeholder for Picasso (commented out)
+            // Picasso.get().load(currentMeal.getProfilePicture()).placeholder(R.drawable.ic_person).into(holder.profileImage);
+            holder.profileImage.setImageResource(R.drawable.ic_person); // Placeholder
         } else {
             holder.profileImage.setImageResource(R.drawable.ic_person);
         }
+
+        // Set OnClickListener for the item view
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), MealDetailActivity.class);
+                intent.putExtra("meal", currentMeal); // Pass the Meal object
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -62,6 +78,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         public TextView mealPriceText;
         public TextView mealLocationText;
         public TextView mealDeliveryOptionText;
+        public ImageView mealImageView; // Add ImageView for the meal
 
         public MealViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,6 +90,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             mealPriceText = itemView.findViewById(R.id.meal_price_text);
             mealLocationText = itemView.findViewById(R.id.meal_location_text);
             mealDeliveryOptionText = itemView.findViewById(R.id.meal_delivery_option_text);
+            mealImageView = itemView.findViewById(R.id.meal_image); // Assuming you have an ImageView with this ID in your item_meal.xml
         }
     }
 }
