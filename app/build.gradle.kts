@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
     implementation(libs.gson)
+    implementation(libs.cardview)
     implementation(libs.glide.core)
     annotationProcessor(libs.glide.compiler)
     androidTestImplementation(libs.ext.junit)

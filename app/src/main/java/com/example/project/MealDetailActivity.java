@@ -1,5 +1,6 @@
 package com.example.project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,8 @@ public class MealDetailActivity extends AppCompatActivity {
     private TextView mealDeliveryOptionTextView;
     private EditText quantityEditText;
     private Button addToCartButton;
+    private Button goBackButton; // Added Go Back Button
+    private Button cartButton; // Added Cart Button
     private Meal currentMeal;
     private RequestQueue requestQueue;
 
@@ -54,6 +57,8 @@ public class MealDetailActivity extends AppCompatActivity {
         mealDeliveryOptionTextView = findViewById(R.id.meal_delivery_option_text_view);
         quantityEditText = findViewById(R.id.quantity_edit_text);
         addToCartButton = findViewById(R.id.add_to_cart_button);
+        goBackButton = findViewById(R.id.go_back_button);
+        cartButton = findViewById(R.id.cart_button);
 
         requestQueue = Volley.newRequestQueue(this);
 
@@ -93,15 +98,48 @@ public class MealDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Error: Could not load meal details", Toast.LENGTH_SHORT).show();
             finish(); // Go back to the previous activity
         }
+
+        // Set click listener for the Go Back button
+        goBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MealDetailActivity.this, MainActivity.class); // Assuming MainActivity is your orders page
+                startActivity(intent);
+                finish(); // Optional: Finish the current activity
+            }
+        });
+
+        // Set click listener for the Cart button
+        cartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MealDetailActivity.this, CartActivity.class); // Assuming CartActivity is your cart page
+                startActivity(intent);
+            }
+        });
     }
 
     private void addToCart(int mealId, int quantity) {
-        String url = "http://10.0.2.2/Soufra_Share/cart.php"; // Replace with your server URL
+        String url = "http://10.0.2.2/Soufra_Share/cart.php";
         StringRequest request = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("AddToCart", "Server Response: " + response);
+                        String TAG = "AddToCart";
+                        Log.d(TAG, "Raw Server Response Length: " + response.length()); // Log the length
+                        if (response.length() > 4000) {
+                            int chunkCount = response.length() / 4000;
+                            for (int i = 0; i <= chunkCount; i++) {
+                                int max = 4000 * (i + 1);
+                                if (max >= response.length()) {
+                                    Log.d(TAG, "Raw Server Response Chunk " + i + ": " + response.substring(4000 * i));
+                                } else {
+                                    Log.d(TAG, "Raw Server Response Chunk " + i + ": " + response.substring(4000 * i, max));
+                                }
+                            }
+                        } else {
+                            Log.d(TAG, "Raw Server Response: " + response);
+                        }
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             String status = jsonResponse.getString("status");
@@ -113,7 +151,7 @@ public class MealDetailActivity extends AppCompatActivity {
                                 Toast.makeText(MealDetailActivity.this, "Error: " + message, Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
-                            Log.e("AddToCart", "JSON Parsing Error: " + e.getMessage());
+                            Log.e(TAG, "JSON Parsing Error: " + e.getMessage());
                             Toast.makeText(MealDetailActivity.this, "Error parsing server response", Toast.LENGTH_SHORT).show();
                         }
                     }

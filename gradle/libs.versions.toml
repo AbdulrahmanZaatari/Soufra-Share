@@ -26,6 +26,7 @@ picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 glide-core = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+cardview = { group = "androidx.cardview", name = "cardview", version = "1.0.0" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 
