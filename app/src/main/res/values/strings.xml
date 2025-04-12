@@ -4,6 +4,18 @@
     <string name="title2">Sign in</string>
     <string name="btn2">Sign In</string>
     <string name="btn1">Sign Up</string>
+    <string name="haveAccount">Already Have An Acoount? Sign In</string>
+    <string name="AddMeal">Post New Meal</string>
+    <string name="deliveryOption">Delivery Option</string>
+
+    <string name="editMeal">Edit Meal Posting</string>
+    <string name="saveChangesBtn">Save Changes</string>
+
+
+
+
+
+
 
 
     <string name="fullName">Full Name</string>

@@ -10,7 +10,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="90dp"
@@ -43,7 +43,10 @@
                 android:id="@+id/edEmail"
                 android:layout_width="match_parent"
                 android:layout_height="57dp"
-                android:layout_margin="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+
+
                 android:background="@color/white"
                 android:drawableLeft="@drawable/email"
                 android:drawablePadding="10dp"
@@ -61,7 +64,7 @@
                 android:id="@+id/editTextTextPassword"
                 android:layout_width="match_parent"
                 android:layout_height="57dp"
-                android:layout_margin="10dp"
+                android:layout_margin="15dp"
                 android:background="@color/white"
                 android:drawableLeft="@drawable/password"
                 android:drawablePadding="10dp"
@@ -76,31 +79,36 @@
                 android:textStyle="bold" />
 
             <Button
+                android:id="@+id/btnSignUpRedirect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:backgroundTint="@color/white"
+                android:fontFamily="casual"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:text="@string/dont_have_account"
+                android:textAllCaps="false"
+                android:textColor="@color/orangeLight"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <Button
                 android:id="@+id/btnSignIn"
                 android:layout_width="318dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="30dp"
+                android:layout_margin="15dp"
+
                 android:backgroundTint="@color/white"
                 android:fontFamily="casual"
                 android:text="@string/btn2"
                 android:textColor="@color/orangeLight"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnSignUpRedirect"
-                android:layout_width="235dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/white"
-                android:fontFamily="casual"
-                android:text="@string/dont_have_account"
-                android:textAllCaps="false"
-                android:textColor="@color/orangeLight"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
