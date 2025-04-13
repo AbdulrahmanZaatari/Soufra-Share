@@ -5,6 +5,10 @@
     <color name="yellowLight">#CCFFF085</color>
     <color name="orangeLighter">#BFFCB454</color>
     <color name="orangeLight">#CCFF9B17</color>
+    <color name="transparentWhite">#CCFFFFFF</color>
+    <color name="brown">#BF9264</color>
+
+
     <color name="red">#FF0000</color>
 
 </resources>
