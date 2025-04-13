@@ -118,10 +118,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:fontFamily="casual"
+                    android:fontFamily="Poppins SemiBold"
                     android:maxLines="2"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"
                     android:padding="5dp"
-
                     android:text="Short description of the meal" />
 
                 <TextView
@@ -130,11 +131,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:fontFamily="casual"
+                    android:fontFamily="Poppins SemiBold"
                     android:padding="5dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
                     android:text="$10.00"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
+                     />
 
                 <TextView
                     android:id="@+id/meal_location_text"
@@ -142,12 +145,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
-                    android:fontFamily="casual"
+                    android:fontFamily="Poppins SemiBold"
                     android:padding="5dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
                     android:text="Location"
-
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    />
 
                 <TextView
                     android:id="@+id/meal_delivery_option_text"
@@ -156,12 +160,12 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="10dp"
-                    android:fontFamily="casual"
+                    android:fontFamily="Poppins SemiBold"
                     android:padding="5dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
                     android:text="Delivery/Pickup"
-                    android:textSize="14sp"
-
-                    android:textStyle="bold" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
         </LinearLayout>

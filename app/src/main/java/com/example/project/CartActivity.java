@@ -41,14 +41,12 @@ public class CartActivity extends AppCompatActivity {
     private TextView totalPriceTextView;
     private TextView emptyCartTextView;
     private Button orderNowButton;
-    private Button backButton; // Changed to Button
-    private int userId = 1; // Buyer ID (assuming logged-in user)
-    private String userEmail = "user@example.com"; // Replace with actual user email retrieval
+    private Button backButton;
+    private int userId = 1;
+    private String userEmail = "user@example.com";
 
-    private final String senderEmail = "zaatariabdulrahman@gmail.com";
-    private final String senderPassword = "rfww rmdi stkl fjf";
+    // Removed senderEmail and senderPassword
 
-    // Define the callback interface
     public interface QuantityCheckCallback {
         void onQuantityChecked(boolean isAvailable);
     }
@@ -261,9 +259,7 @@ public class CartActivity extends AppCompatActivity {
                             cartAdapter.notifyDataSetChanged();
                             updateTotalPrice();
                             checkEmptyCart();
-                            // Send confirmation email
-                            sendConfirmationEmail(finalOrderSummary, finalTotalPrice);
-
+                            // Removed sendConfirmationEmail call
                         } else {
                             Toast.makeText(this, "Error placing order for seller " + sellerId + ": " + map.get("message"), Toast.LENGTH_LONG).show();
                         }
@@ -353,41 +349,7 @@ public class CartActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void sendConfirmationEmail(String orderSummary, double totalPrice) {
-        final String toEmail = userEmail;
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Properties props = new Properties();
-                    props.put("mail.smtp.host", "smtp.gmail.com");
-                    props.put("mail.smtp.socketFactory.port", "465");
-                    props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-                    props.put("mail.smtp.auth", "true");
-                    props.put("mail.smtp.port", "465");
-
-                    Session session = Session.getDefaultInstance(props, new Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication(senderEmail, senderPassword);
-                        }
-                    });
-
-                    Message message = new MimeMessage(session);
-                    message.setFrom(new InternetAddress(senderEmail));
-                    message.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-                    message.setSubject("Order Confirmation - Soufra Share");
-                    message.setText("Thank you for your order!\n\nOrder Summary:\n" + orderSummary + "\nTotal Price: $" + String.format("%.2f", totalPrice) + "\n\nYour order will be processed shortly.\n\nBest regards,\nThe Soufra Share Team");
-
-                    Transport.send(message);
-                    Log.d(TAG, "sendConfirmationEmail: Email sent successfully to " + toEmail);
-                } catch (MessagingException e) {
-                    Log.e(TAG, "sendConfirmationEmail: Error sending email", e);
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
+    // Removed sendConfirmationEmail method
 
     private void fetchCartData(int userId) {
         String url = "http://10.0.2.2/Soufra_Share/get_cart.php?user_id=" + userId;
