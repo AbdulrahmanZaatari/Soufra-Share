@@ -41,6 +41,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         holder.mealPriceText.setText("$" + String.format("%.2f", currentMeal.getPrice()));
         holder.mealLocationText.setText("Location: " + currentMeal.getLocation());
         holder.mealDeliveryOptionText.setText("Delivery: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
+        holder.mealQuantityText.setText("Qty: " + currentMeal.getQuantity()); // Set the quantity
 
         // Placeholder for image loading
         holder.mealImageView.setImageResource(R.drawable.sushi);
@@ -79,6 +80,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         public TextView mealLocationText;
         public TextView mealDeliveryOptionText;
         public ImageView mealImageView; // Add ImageView for the meal
+        public TextView mealQuantityText; // Add TextView for quantity
 
         public MealViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -91,6 +93,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             mealLocationText = itemView.findViewById(R.id.meal_location_text);
             mealDeliveryOptionText = itemView.findViewById(R.id.meal_delivery_option_text);
             mealImageView = itemView.findViewById(R.id.meal_image); // Assuming you have an ImageView with this ID in your item_meal.xml
+            mealQuantityText = itemView.findViewById(R.id.meal_quantity_text); // Initialize the quantity TextView
         }
     }
 }

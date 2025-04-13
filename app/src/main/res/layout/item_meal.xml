@@ -108,7 +108,7 @@
                     android:gravity="center"
                     android:padding="8dp"
                     android:text="Meal Name"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
 
                     android:textStyle="bold" />
 
@@ -120,7 +120,8 @@
                     android:layout_marginTop="4dp"
                     android:fontFamily="Poppins SemiBold"
                     android:maxLines="2"
-                    android:textSize="22sp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:textColor="@color/black"
                     android:padding="5dp"
                     android:text="Short description of the meal" />
@@ -136,8 +137,19 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:text="$10.00"
-                    android:textSize="16sp"
-                     />
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/meal_quantity_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="Poppins SemiBold"
+                    android:padding="5dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:text="Qty: 5" android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/meal_location_text"
@@ -150,8 +162,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:text="Location"
-                    android:textSize="14sp"
-                    />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/meal_delivery_option_text"
