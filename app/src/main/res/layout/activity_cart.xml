@@ -6,15 +6,19 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg">
 
-    <ImageView
+    <Button
         android:id="@+id/back_button"
-        android:layout_width="60dp"
+        android:layout_width="80dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@color/brown"
+        android:textStyle="bold"
+        android:fontFamily="casual"
+        android:text="Back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/back" />
+        />
 
     <TextView
         android:id="@+id/cart_title"

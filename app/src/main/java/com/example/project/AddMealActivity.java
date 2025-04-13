@@ -1,3 +1,4 @@
+// AddMealActivity.java
 package com.example.project;
 
 import android.Manifest;
@@ -22,8 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -34,13 +33,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class AddMealActivity extends AppCompatActivity {
@@ -227,108 +222,53 @@ public class AddMealActivity extends AppCompatActivity {
         String url = BASE_URL + "meals.php";
 
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        showLoading(false);
-                        String resultResponse = new String(response.data);
-                        Log.d(TAG, "Post Response: " + resultResponse);
-                        try {
-                            JSONObject jsonObject = new JSONObject(resultResponse);
-                            String message = jsonObject.optString("message", "Meal posted successfully!");
-                            Toast.makeText(AddMealActivity.this, message, Toast.LENGTH_SHORT).show();
-                            setResult(RESULT_OK);
-                            finish();
-                        } catch (JSONException e) {
-                            Log.e(TAG, "Error parsing post response", e);
-                            Toast.makeText(AddMealActivity.this, "Post successful (response parsing issue).", Toast.LENGTH_SHORT).show();
-                            setResult(RESULT_OK);
-                            finish();
-                        }
+                response -> {
+                    showLoading(false);
+                    String resultResponse = new String(response.data);
+                    Log.d(TAG, "Post Response: " + resultResponse);
+                    try {
+                        JSONObject jsonObject = new JSONObject(resultResponse);
+                        String message = jsonObject.optString("message", "Meal posted successfully!");
+                        Toast.makeText(AddMealActivity.this, message, Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error parsing post response", e);
+                        Toast.makeText(AddMealActivity.this, "Post successful (response parsing issue).", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                }, error -> {
+            showLoading(false);
+            handleVolleyError(error);
+        });
+
+        // Add string parameters
+        multipartRequest.addStringParam("user_id", String.valueOf(currentUserId));
+        multipartRequest.addStringParam("name", name);
+        multipartRequest.addStringParam("price", String.valueOf(price));
+        multipartRequest.addStringParam("quantity", String.valueOf(quantity));
+        multipartRequest.addStringParam("location", location);
+        multipartRequest.addStringParam("delivery_option", String.valueOf(deliveryOptionValue));
+        multipartRequest.addStringParam("description", description);
+
+        // Add file parameter
+        if (selectedImageUri != null) {
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                byte[] imageData = getBytes(inputStream);
+                String mimeType = getContentResolver().getType(selectedImageUri);
+
+                String filename = "meal_image_" + System.currentTimeMillis() + ".png"; // Force .png extension
+                Log.d(TAG, "Selected Image Filename (Forced): " + filename);
+                multipartRequest.addFile("meal_image", filename, imageData, mimeType); // Pass the filename here
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Error reading image file.", Toast.LENGTH_SHORT).show();
                 showLoading(false);
-                handleVolleyError(error);
+                return;
             }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = super.getHeaders();
-                if (headers == null || headers.isEmpty()) {
-                    headers = new HashMap<>();
-                }
-                headers.put("Content-Type", "multipart/form-data; boundary=" + getBoundary());
-                return headers;
-            }
-
-            private String getBoundary() {
-                return "apiclient" + System.currentTimeMillis();
-            }
-
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("user_id", String.valueOf(currentUserId));
-                params.put("name", name);
-                params.put("price", String.valueOf(price));
-                params.put("quantity", String.valueOf(quantity));
-                params.put("location", location);
-                params.put("delivery_option", String.valueOf(deliveryOptionValue));
-                params.put("description", description);
-                return params;
-            }
-
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                DataOutputStream dos = new DataOutputStream(bos);
-                String boundary = getBoundary();
-
-                try {
-                    // Populate string parameters
-                    Map<String, String> params = getParams();
-                    if (params != null && params.size() > 0) {
-                        for (Map.Entry<String, String> entry : params.entrySet()) {
-                            buildPart(dos, entry.getKey(), entry.getValue(), boundary);
-                        }
-                    }
-
-                    // Populate byte data (image)
-                    if (selectedImageUri != null) {
-                        InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
-                        byte[] imageData = getBytes(inputStream);
-                        String filename = new File(selectedImageUri.getPath()).getName();
-                        buildPart(dos, "meal_image", filename, imageData, boundary);
-                    }
-
-                    // End of multipart/form-data. Add the closing boundary.
-                    dos.writeBytes("--" + boundary + "--" + "\r\n");
-
-                    return bos.toByteArray();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            private void buildPart(DataOutputStream dataOutputStream, String key, String value, String boundary) throws IOException {
-                dataOutputStream.writeBytes("--" + boundary + "\r\n");
-                dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"" + "\r\n");
-                dataOutputStream.writeBytes("\r\n");
-                dataOutputStream.writeBytes(value + "\r\n");
-            }
-
-            private void buildPart(DataOutputStream dataOutputStream, String key, String filename, byte[] fileData, String boundary) throws IOException {
-                dataOutputStream.writeBytes("--" + boundary + "\r\n");
-                dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + filename + "\"" + "\r\n");
-                dataOutputStream.writeBytes("Content-Type: image/jpeg" + "\r\n"); // Adjust content type as needed
-                dataOutputStream.writeBytes("\r\n");
-                dataOutputStream.write(fileData);
-                dataOutputStream.writeBytes("\r\n");
-            }
-        };
+        }
 
         requestQueue.add(multipartRequest);
     }
@@ -379,7 +319,7 @@ public class AddMealActivity extends AppCompatActivity {
         finish();
     }
 
-    private void handleVolleyError(com.android.volley.VolleyError error) {
+    private void handleVolleyError(VolleyError error) {
         Log.e(TAG, "Volley error: ", error);
         String message = "An error occurred while posting.";
         if (error.networkResponse != null) {

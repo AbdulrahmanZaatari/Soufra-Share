@@ -1,3 +1,4 @@
+// VolleyMultipartRequest.java
 package com.example.project;
 
 import com.android.volley.AuthFailureError;
@@ -9,8 +10,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Collections;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +22,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     private final Map<String, String> mStringParams;
 
     private final String BOUNDARY = "apiclient-" + System.currentTimeMillis();
+    private final String LINE_FEED = "\r\n";
     private final String MULTIPART_FORM_DATA = "multipart/form-data; boundary=" + BOUNDARY;
 
     public VolleyMultipartRequest(int method, String url, Response.Listener<NetworkResponse> listener, Response.ErrorListener errorListener) {
@@ -33,8 +34,9 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         this.mHeaders = new HashMap<>();
     }
 
-    public void addFile(String name, byte[] data, String mimeType) {
-        mFileParams.put(name, new DataPart(name, data, mimeType));
+    // Updated addFile method to accept filename
+    public void addFile(String name, String filename, byte[] data, String mimeType) {
+        mFileParams.put(name, new DataPart(filename, data, mimeType));
     }
 
     public void addStringParam(String name, String value) {
@@ -55,19 +57,20 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
     public byte[] getBody() throws AuthFailureError {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
+            OutputStream os = bos;
             // Add string parameters
             for (Map.Entry<String, String> entry : mStringParams.entrySet()) {
-                buildPart(bos, entry.getKey(), entry.getValue());
+                buildPart(os, entry.getKey(), entry.getValue());
             }
 
             // Add file parameters
             for (Map.Entry<String, DataPart> entry : mFileParams.entrySet()) {
                 DataPart dataPart = entry.getValue();
-                buildPart(bos, dataPart.getFileName(), dataPart);
+                buildPart(os, entry.getKey(), dataPart); // Use entry.getKey() as name
             }
 
             // End of multipart/form-data.
-            bos.write(("--" + BOUNDARY + "--\r\n").getBytes());
+            os.write((LINE_FEED + "--" + BOUNDARY + "--" + LINE_FEED).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,23 +78,24 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         return bos.toByteArray();
     }
 
-    private void buildPart(ByteArrayOutputStream dataOutputStream, String name, String value) throws IOException {
-        dataOutputStream.write(("--" + BOUNDARY + "\r\n").getBytes());
-        dataOutputStream.write(("Content-Disposition: form-data; name=\"" + name + "\"\r\n").getBytes());
-        dataOutputStream.write(("Content-Type: text/plain; charset=UTF-8\r\n").getBytes());
-        dataOutputStream.write(("\r\n").getBytes());
+    private void buildPart(OutputStream dataOutputStream, String name, String value) throws IOException {
+        dataOutputStream.write(("--" + BOUNDARY + LINE_FEED).getBytes());
+        dataOutputStream.write(("Content-Disposition: form-data; name=\"" + name + "\"" + LINE_FEED).getBytes());
+        dataOutputStream.write(("Content-Type: text/plain; charset=UTF-8" + LINE_FEED).getBytes());
+        dataOutputStream.write((LINE_FEED).getBytes());
         dataOutputStream.write(value.getBytes("UTF-8"));
-        dataOutputStream.write(("\r\n").getBytes());
+        dataOutputStream.write((LINE_FEED).getBytes());
     }
 
-    private void buildPart(ByteArrayOutputStream dataOutputStream, String name, DataPart dataPart) throws IOException {
-        dataOutputStream.write(("--" + BOUNDARY + "\r\n").getBytes());
-        dataOutputStream.write(("Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + dataPart.getFileName() + "\"\r\n").getBytes());
-        dataOutputStream.write(("Content-Type: " + dataPart.getMimeType() + "\r\n").getBytes());
-        dataOutputStream.write(("Content-Transfer-Encoding: binary\r\n").getBytes());
-        dataOutputStream.write(("\r\n").getBytes());
+    // Updated buildPart method to use DataPart's filename
+    private void buildPart(OutputStream dataOutputStream, String name, DataPart dataPart) throws IOException {
+        dataOutputStream.write(("--" + BOUNDARY + LINE_FEED).getBytes());
+        dataOutputStream.write(("Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + dataPart.getFileName() + "\"" + LINE_FEED).getBytes());
+        dataOutputStream.write(("Content-Type: " + dataPart.getMimeType() + LINE_FEED).getBytes());
+        dataOutputStream.write(("Content-Transfer-Encoding: binary" + LINE_FEED).getBytes());
+        dataOutputStream.write((LINE_FEED).getBytes());
         dataOutputStream.write(dataPart.getContent());
-        dataOutputStream.write(("\r\n").getBytes());
+        dataOutputStream.write((LINE_FEED).getBytes());
     }
 
 

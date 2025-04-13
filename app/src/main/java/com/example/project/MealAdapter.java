@@ -22,7 +22,7 @@ import java.util.List;
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder> {
 
     private List<Meal> mealList;
-    private String baseUrl = "http://10.0.2.2/soufra_share/uploads/"; // Adjust this to your server's base URL for uploads
+    private String baseUrl = "http://10.0.2.2/soufra_share/uploads/";
 
     public MealAdapter(List<Meal> mealList) {
         this.mealList = mealList;
@@ -57,23 +57,23 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                 List<String> imagePaths = gson.fromJson(imagePathsJson, listType);
 
                 if (!imagePaths.isEmpty()) {
-                    String imageUrl = baseUrl + imagePaths.get(0); // Assuming you want to display the first image
+                    String imageUrl = baseUrl + imagePaths.get(0);
                     Log.d("MealAdapter", "Loading meal image from: " + imageUrl);
                     Picasso.get()
                             .load(imageUrl)
-                            .placeholder(R.drawable.sushi) // Placeholder while loading
-                            .error(R.drawable.sushi)       // Error placeholder
+                            .placeholder(R.drawable.sushi)
+                            .error(R.drawable.sushi)
                             .into(holder.mealImageView);
                 } else {
-                    holder.mealImageView.setImageResource(R.drawable.sushi); // Show placeholder if no image paths
+                    holder.mealImageView.setImageResource(R.drawable.sushi);
                 }
 
             } catch (Exception e) {
                 Log.e("MealAdapter", "Error parsing image paths: " + e.getMessage());
-                holder.mealImageView.setImageResource(R.drawable.sushi); // Show placeholder on error
+                holder.mealImageView.setImageResource(R.drawable.sushi);
             }
         } else {
-            holder.mealImageView.setImageResource(R.drawable.sushi); // Show placeholder if no image paths
+            holder.mealImageView.setImageResource(R.drawable.sushi);
         }
 
         // Load profile picture
@@ -84,9 +84,9 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             String fullProfilePictureUrl = baseUrl + profilePictureUrl;
             Log.d("MealAdapter", "Loading profile picture from: " + fullProfilePictureUrl);
             Picasso.get()
-                    .load(fullProfilePictureUrl) // Assuming the path in DB is relative to your uploads folder
-                    .placeholder(R.drawable.ic_person) // Placeholder image if loading
-                    .error(R.drawable.ic_person)       // Placeholder image if there's an error loading
+                    .load(fullProfilePictureUrl)
+                    .placeholder(R.drawable.ic_person)
+                    .error(R.drawable.ic_person)
                     .into(holder.profileImage);
         } else {
             holder.profileImage.setImageResource(R.drawable.ic_person); // Placeholder if URL is null or empty

@@ -1,3 +1,4 @@
+// SignUp.java
 package com.example.project;
 
 import android.Manifest;
@@ -202,8 +203,27 @@ public class SignUp extends AppCompatActivity {
             InputStream inputStream = getContentResolver().openInputStream(profileImageUri);
             byte[] imgData = getBytes(inputStream);
             String mimeType = getContentResolver().getType(profileImageUri);
-            volleyMultipartRequest.addFile("profile_image", imgData, mimeType);
-            Log.d(TAG, "Added file to multipart request");
+
+            String filename = "profile_" + System.currentTimeMillis();
+            String extension = "";
+
+            if (mimeType != null) {
+                if (mimeType.equals("image/jpeg")) {
+                    extension = ".jpg";
+                } else if (mimeType.equals("image/png")) {
+                    extension = ".png";
+                } else if (mimeType.equals("image/gif")) {
+                    extension = ".gif";
+                }
+                // Add other image types as needed
+            } else {
+                extension = ".jpg"; // Default extension if MIME type is null
+            }
+
+            String fullFilename = filename + extension;
+
+            volleyMultipartRequest.addFile("profile_image", fullFilename, imgData, mimeType);
+            Log.d(TAG, "Added file to multipart request with filename: " + fullFilename);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Error getting image data: " + e.getMessage());
