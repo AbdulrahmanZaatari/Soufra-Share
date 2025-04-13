@@ -93,8 +93,6 @@ public class SignIn extends AppCompatActivity {
                                     String message = response.optString("message", "Unknown status"); // Use optString for safety
 
                                     if (success) {
-                                        // --- Get user_id from response ---
-                                        // Make sure your PHP returns "user_id" on successful sign-in
                                         if (!response.has("user_id")) {
                                             Log.e("SignInResponse", "Response missing 'user_id' key on success");
                                             Toast.makeText(SignIn.this, "Login successful, but user ID missing.", Toast.LENGTH_LONG).show();
@@ -108,20 +106,14 @@ public class SignIn extends AppCompatActivity {
 
                                         Log.i("SignIn", "Sign-in successful for user ID: " + userId);
                                         Toast.makeText(SignIn.this, message, Toast.LENGTH_SHORT).show(); // Show success message
-
-                                        // --- Save Login Timestamp and User ID ---
                                         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
                                         SharedPreferences.Editor editor = prefs.edit();
                                         long loginTime = System.currentTimeMillis(); // Get current time in milliseconds
                                         editor.putLong(KEY_LOGIN_TIMESTAMP, loginTime); // Save the timestamp
-                                        editor.putInt("user_id", userId); // <<< ADD THIS LINE TO SAVE USER ID
-                                        editor.apply(); // Apply changes asynchronously
+                                        editor.putInt("user_id", userId);
+                                        editor.apply();
                                         Log.d("SignIn", "Saved login timestamp: " + loginTime + ", User ID: " + userId);
-                                        // -----------------------------
-
-                                        // Navigate to MainActivity
                                         Intent intent = new Intent(SignIn.this, MainActivity.class);
-                                        // Optional: Clear task stack if you don't want users going back to login screen
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
                                         finish(); // Finish SignIn activity

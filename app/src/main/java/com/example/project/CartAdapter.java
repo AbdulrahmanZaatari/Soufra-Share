@@ -48,8 +48,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         Glide.with(context)
                 .load(currentItem.getImageUrl())
-                .placeholder(R.drawable.meal) // Use your placeholder image
-                .error(R.drawable.meal)       // Use your error image
+                .placeholder(R.drawable.sushi)
+                .error(R.drawable.meal)
                 .into(holder.mealImageView);
 
         holder.deleteButton.setOnClickListener(v -> {

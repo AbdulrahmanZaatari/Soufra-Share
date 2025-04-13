@@ -45,8 +45,6 @@ public class CartActivity extends AppCompatActivity {
     private int userId = 1;
     private String userEmail = "user@example.com";
 
-    // Removed senderEmail and senderPassword
-
     public interface QuantityCheckCallback {
         void onQuantityChecked(boolean isAvailable);
     }

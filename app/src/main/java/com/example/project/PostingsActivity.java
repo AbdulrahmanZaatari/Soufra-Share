@@ -113,7 +113,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                 navigateTo(MainActivity.class);
                 return true;
             } else if (id == R.id.navigation_dashboard) {
-                navigateTo(DashboardActivity.class);
+                navigateTo(UserDashboardActivity.class);
                 return true;
             }
             return false;

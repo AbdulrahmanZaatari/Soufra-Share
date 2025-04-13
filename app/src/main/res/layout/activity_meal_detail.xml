@@ -147,6 +147,7 @@
                     android:inputType="number"
                />
 
+
                 <Button
                     android:id="@+id/add_to_cart_button"
                     android:layout_width="253dp"
@@ -164,6 +165,7 @@
 
             </LinearLayout>
     </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
     <TextView
