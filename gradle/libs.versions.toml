@@ -11,6 +11,8 @@ volley = "1.2.1"
 picasso = "2.8"
 gson = "2.10.1"
 glide = "4.16.0"
+androidMail = "1.6.6"
+androidActivation = "1.6.7"
 
 
 [libraries]
@@ -27,6 +29,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 glide-core = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
 cardview = { group = "androidx.cardview", name = "cardview", version = "1.0.0" }
+android-mail = { group = "com.sun.mail", name = "android-mail", version.ref = "androidMail" }
+android-activation = { group = "com.sun.mail", name = "android-activation", version.ref = "androidActivation" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
