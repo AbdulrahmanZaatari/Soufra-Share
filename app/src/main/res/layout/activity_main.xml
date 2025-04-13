@@ -48,6 +48,10 @@
     </LinearLayout>
 
     <!-- RecyclerView -->
+
+    <!-- Bottom Navigation -->
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/orders_recycler_view"
         android:layout_width="0dp"
@@ -55,11 +59,10 @@
         android:layout_marginBottom="21dp"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_layout" />
-
-    <!-- Bottom Navigation -->
-
+        app:layout_constraintTop_toBottomOf="@+id/search_layout"
+        tools:listitem="@layout/item_meal" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
