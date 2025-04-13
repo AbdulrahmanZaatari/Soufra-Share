@@ -1,6 +1,7 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder> {
@@ -44,15 +48,43 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         holder.mealDeliveryOptionText.setText("Delivery: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
         holder.mealQuantityText.setText("Qty: " + currentMeal.getQuantity());
 
-        // Load meal image (you might want to handle this similarly to the profile picture later)
-        Picasso.get().load(R.drawable.sushi).into(holder.mealImageView); // Using placeholder for now
+        // Load meal image
+        String imagePathsJson = currentMeal.getImagePaths();
+        if (imagePathsJson != null && !imagePathsJson.isEmpty() && !imagePathsJson.equals("[]")) {
+            try {
+                Gson gson = new Gson();
+                Type listType = new TypeToken<List<String>>() {}.getType();
+                List<String> imagePaths = gson.fromJson(imagePathsJson, listType);
+
+                if (!imagePaths.isEmpty()) {
+                    String imageUrl = baseUrl + imagePaths.get(0); // Assuming you want to display the first image
+                    Log.d("MealAdapter", "Loading meal image from: " + imageUrl);
+                    Picasso.get()
+                            .load(imageUrl)
+                            .placeholder(R.drawable.sushi) // Placeholder while loading
+                            .error(R.drawable.sushi)       // Error placeholder
+                            .into(holder.mealImageView);
+                } else {
+                    holder.mealImageView.setImageResource(R.drawable.sushi); // Show placeholder if no image paths
+                }
+
+            } catch (Exception e) {
+                Log.e("MealAdapter", "Error parsing image paths: " + e.getMessage());
+                holder.mealImageView.setImageResource(R.drawable.sushi); // Show placeholder on error
+            }
+        } else {
+            holder.mealImageView.setImageResource(R.drawable.sushi); // Show placeholder if no image paths
+        }
 
         // Load profile picture
         String profilePictureUrl = currentMeal.getProfilePicture();
+        Log.d("MealAdapter", "Profile picture URL from Meal object: " + profilePictureUrl);
 
         if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
+            String fullProfilePictureUrl = baseUrl + profilePictureUrl;
+            Log.d("MealAdapter", "Loading profile picture from: " + fullProfilePictureUrl);
             Picasso.get()
-                    .load(baseUrl + profilePictureUrl) // Assuming the path in DB is relative to your uploads folder
+                    .load(fullProfilePictureUrl) // Assuming the path in DB is relative to your uploads folder
                     .placeholder(R.drawable.ic_person) // Placeholder image if loading
                     .error(R.drawable.ic_person)       // Placeholder image if there's an error loading
                     .into(holder.profileImage);
