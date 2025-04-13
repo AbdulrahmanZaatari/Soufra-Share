@@ -11,13 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso; // Make sure to add Picasso dependency in your build.gradle (app level)
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder> {
 
     private List<Meal> mealList;
+    private String baseUrl = "http://10.0.2.2/soufra_share/uploads/"; // Adjust this to your server's base URL for uploads
 
     public MealAdapter(List<Meal> mealList) {
         this.mealList = mealList;
@@ -41,17 +42,22 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         holder.mealPriceText.setText("$" + String.format("%.2f", currentMeal.getPrice()));
         holder.mealLocationText.setText("Location: " + currentMeal.getLocation());
         holder.mealDeliveryOptionText.setText("Delivery: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
-        holder.mealQuantityText.setText("Qty: " + currentMeal.getQuantity()); // Set the quantity
+        holder.mealQuantityText.setText("Qty: " + currentMeal.getQuantity());
 
-        // Placeholder for image loading
-        holder.mealImageView.setImageResource(R.drawable.sushi);
+        // Load meal image (you might want to handle this similarly to the profile picture later)
+        Picasso.get().load(R.drawable.sushi).into(holder.mealImageView); // Using placeholder for now
 
-        if (currentMeal.getProfilePicture() != null && !currentMeal.getProfilePicture().isEmpty()) {
-            // Placeholder for Picasso (commented out)
-            // Picasso.get().load(currentMeal.getProfilePicture()).placeholder(R.drawable.ic_person).into(holder.profileImage);
-            holder.profileImage.setImageResource(R.drawable.ic_person); // Placeholder
+        // Load profile picture
+        String profilePictureUrl = currentMeal.getProfilePicture();
+
+        if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
+            Picasso.get()
+                    .load(baseUrl + profilePictureUrl) // Assuming the path in DB is relative to your uploads folder
+                    .placeholder(R.drawable.ic_person) // Placeholder image if loading
+                    .error(R.drawable.ic_person)       // Placeholder image if there's an error loading
+                    .into(holder.profileImage);
         } else {
-            holder.profileImage.setImageResource(R.drawable.ic_person);
+            holder.profileImage.setImageResource(R.drawable.ic_person); // Placeholder if URL is null or empty
         }
 
         // Set OnClickListener for the item view
@@ -79,8 +85,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         public TextView mealPriceText;
         public TextView mealLocationText;
         public TextView mealDeliveryOptionText;
-        public ImageView mealImageView; // Add ImageView for the meal
-        public TextView mealQuantityText; // Add TextView for quantity
+        public ImageView mealImageView;
+        public TextView mealQuantityText;
 
         public MealViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -92,8 +98,8 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             mealPriceText = itemView.findViewById(R.id.meal_price_text);
             mealLocationText = itemView.findViewById(R.id.meal_location_text);
             mealDeliveryOptionText = itemView.findViewById(R.id.meal_delivery_option_text);
-            mealImageView = itemView.findViewById(R.id.meal_image); // Assuming you have an ImageView with this ID in your item_meal.xml
-            mealQuantityText = itemView.findViewById(R.id.meal_quantity_text); // Initialize the quantity TextView
+            mealImageView = itemView.findViewById(R.id.meal_image);
+            mealQuantityText = itemView.findViewById(R.id.meal_quantity_text);
         }
     }
 }
