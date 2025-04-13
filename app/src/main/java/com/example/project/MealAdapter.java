@@ -43,7 +43,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         holder.mealDeliveryOptionText.setText("Delivery: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
 
         // Placeholder for image loading
-        holder.mealImageView.setImageResource(R.drawable.meal);
+        holder.mealImageView.setImageResource(R.drawable.sushi);
 
         if (currentMeal.getProfilePicture() != null && !currentMeal.getProfilePicture().isEmpty()) {
             // Placeholder for Picasso (commented out)

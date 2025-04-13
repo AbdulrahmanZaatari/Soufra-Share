@@ -1,4 +1,6 @@
 package com.example.project;
+import androidx.core.view.WindowCompat;
+
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EdgeToEdge.enable(this);
 
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);

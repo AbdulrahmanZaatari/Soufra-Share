@@ -91,7 +91,6 @@ public class EditMealActivity extends AppCompatActivity {
         etLocation = findViewById(R.id.edit_text_meal_location);
         spinnerDeliveryOption = findViewById(R.id.spinner_edit_delivery_option);
         btnSaveChanges = findViewById(R.id.button_save_meal_changes);
-        progressBar = findViewById(R.id.progress_bar_edit_meal);
 
         // Setup Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
