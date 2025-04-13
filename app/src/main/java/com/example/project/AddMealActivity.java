@@ -88,7 +88,6 @@ public class AddMealActivity extends AppCompatActivity {
         spinnerDeliveryOption = findViewById(R.id.spinner_add_delivery_option);
         btnPostMeal = findViewById(R.id.button_post_meal);
 
-
         // Setup Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, DELIVERY_OPTIONS);

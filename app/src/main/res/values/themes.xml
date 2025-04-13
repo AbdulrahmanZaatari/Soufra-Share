@@ -1,9 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Project" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
     </style>
 
     <style name="Theme.Project" parent="Base.Theme.Project" />
+    <style name="BottomNavTextStyleInactive" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">17sp</item>
+        <item name="android:paddingTop">20dp</item>
+
+        <item name="android:fontFamily">casual</item> <!-- Make sure you have this font in res/font/ -->
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="BottomNavTextStyleActive" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">17sp</item>
+        <item name="android:paddingTop">20dp</item>
+
+        <item name="android:fontFamily">casual</item> <!-- Make sure you have this font in res/font/ -->
+        <item name="android:textColor">@color/orangeLight</item>
+    </style>
+
 </resources>
