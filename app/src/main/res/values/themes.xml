@@ -18,7 +18,7 @@
         <item name="android:paddingTop">20dp</item>
 
         <item name="android:fontFamily">casual</item> <!-- Make sure you have this font in res/font/ -->
-        <item name="android:textColor">@color/orangeLight</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>
