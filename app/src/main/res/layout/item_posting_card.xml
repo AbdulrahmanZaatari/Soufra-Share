@@ -1,94 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="12dp">
 
-        <ImageView
-            android:id="@+id/image_view_posting"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="meal_image" />
-        <TextView
-            android:id="@+id/text_view_posting_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintStart_toEndOf="@+id/image_view_posting"
-            app:layout_constraintTop_toTopOf="@+id/image_view_posting"
-            app:layout_constraintEnd_toStartOf="@+id/button_edit_posting"
-            android:layout_marginEnd="8dp"
-            tools:text="Delicious Pasta Carbonara" />
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView6"
+        android:layout_width="0dp"
+        android:layout_height="179dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/text_view_posting_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="@color/orangeLight"
-            app:layout_constraintStart_toStartOf="@+id/text_view_posting_name"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_posting_name"
-            tools:text="$12.99" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/text_view_posting_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            app:layout_constraintStart_toEndOf="@+id/text_view_posting_price"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_posting_name"
-            tools:text="Qty: 5" />
 
-        <TextView
-            android:id="@+id/text_view_posting_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:maxLines="2"
-            android:ellipsize="end"
-            app:layout_constraintTop_toBottomOf="@+id/image_view_posting"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:text="A classic Roman pasta dish made with eggs, hard cheese, cured pork, and black pepper. Very tasty and fulfilling..." />
+            <androidx.cardview.widget.CardView
+                android:layout_width="129dp"
+                android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/button_edit_posting"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="edit"
-            android:src="@drawable/ic_person"
-            app:tint="?attr/colorControlNormal"
-            app:layout_constraintEnd_toStartOf="@+id/button_delete_posting"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginEnd="4dp"/>
-        <ImageButton
-            android:id="@+id/button_delete_posting"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="delete"
-            android:src="@drawable/ic_person"
-            app:tint="@color/design_default_color_error"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/image_view_posting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@drawable/sushi" />
+            </androidx.cardview.widget.CardView>
 
-</com.google.android.material.card.MaterialCardView>
+            <LinearLayout
+                android:layout_width="259dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_view_posting_name"
+                    android:layout_width="231dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/textview_border"
+                    android:fontFamily="cursive"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Delicious Pasta Carbonara" />
+
+                <TextView
+                    android:id="@+id/text_view_posting_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:fontFamily="casual"
+                    android:maxLines="3"
+                    android:padding="5dp"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="A classic Roman pasta dish made with eggs, hard cheese, cured pork, and black pepper. Very tasty and fulfilling..." />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="41dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/text_view_posting_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:fontFamily="cursive"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="$12.99" />
+
+                    <TextView
+                        android:id="@+id/text_view_posting_quantity"
+                        android:layout_width="83dp"
+                        android:layout_height="41dp"
+                        android:layout_marginStart="20dp"
+                        android:fontFamily="casual"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="Qty: 5" />
+
+
+                    <ImageButton
+                        android:id="@+id/button_delete_posting"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="delete"
+                        android:src="@drawable/deletemini" />
+
+                    <ImageButton
+                        android:id="@+id/button_edit_posting"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="4dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="edit"
+                        android:src="@drawable/editmini" />
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

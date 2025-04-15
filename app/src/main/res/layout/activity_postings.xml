@@ -10,6 +10,7 @@
     android:background="@drawable/bg"
     tools:context=".PostingsActivity">
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/postings_recycler_view"
         android:layout_width="0dp"
@@ -32,12 +33,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/postings_recycler_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:visibility="visible"/>
+        tools:visibility="invisible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_posting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/brown"
+        app:srcCompat="@drawable/plus"
         android:layout_margin="16dp"
         android:contentDescription="+"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_postings"
@@ -47,7 +50,12 @@
         android:id="@+id/bottom_navigation_postings"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
+        android:background="@drawable/textview_border"
+        app:itemIconSize="30dp"
+        app:itemIconTint="@color/black"
+        app:itemTextAppearanceActive="@style/BottomNavTextStyleActive"
+        app:itemTextAppearanceInactive="@style/BottomNavTextStyleInactive"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

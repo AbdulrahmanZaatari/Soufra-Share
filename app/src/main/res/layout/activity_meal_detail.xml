@@ -15,7 +15,6 @@
         android:layout_marginBottom="42dp"
         android:backgroundTint="@color/brown"
         android:drawableLeft="@drawable/miniback"
-
         android:fontFamily="casual"
         android:text="Go Back"
         android:textColor="@color/white"
@@ -146,7 +145,8 @@
                     android:textColorHint="@color/black"
                     android:hint="Qty:"
                     android:inputType="number"
-                    />
+               />
+
 
                 <Button
                     android:id="@+id/add_to_cart_button"
@@ -164,7 +164,8 @@
                     android:text="Add to Cart" />
 
             </LinearLayout>
-        </LinearLayout>
+    </LinearLayout>
+
     </androidx.cardview.widget.CardView>
 
     <TextView
