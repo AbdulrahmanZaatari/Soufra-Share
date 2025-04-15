@@ -1,9 +1,14 @@
 package com.example.project;
 
 import java.io.Serializable; // Import Serializable
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import android.util.Log;
 
-// Implement Serializable
-public class Meal implements Serializable {
+// Implement Serializable and Comparable
+public class Meal implements Serializable, Comparable<Meal> {
     private int mealId;
     private int userId;
     private String name;
@@ -91,6 +96,10 @@ public class Meal implements Serializable {
         return createdAt;
     }
 
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -103,4 +112,17 @@ public class Meal implements Serializable {
         return rating;
     }
 
+    @Override
+    public int compareTo(Meal other) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try {
+            Date thisDate = sdf.parse(this.createdAt);
+            Date otherDate = sdf.parse(other.createdAt);
+            // Compare in descending order (newest first)
+            return otherDate.compareTo(thisDate);
+        } catch (ParseException e) {
+            Log.e("Meal", "Error parsing date", e);
+            return 0; // Handle error by considering them equal
+        }
+    }
 }

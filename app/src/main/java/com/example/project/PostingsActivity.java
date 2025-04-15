@@ -113,8 +113,20 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                 navigateTo(MainActivity.class);
                 return true;
             } else if (id == R.id.navigation_dashboard) {
-                navigateTo(UserDashboardActivity.class);
-                return true;
+                SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+                // Use the correct key: "user_id"
+                int userId = prefs.getInt("user_id", -1);
+
+                if (userId != -1) {
+                    Intent intent = new Intent(PostingsActivity.this, UserDashboardActivity.class);
+                    intent.putExtra("USER_ID", userId);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    return true;
+                } else {
+                    Toast.makeText(PostingsActivity.this, "User ID not found in preferences.", Toast.LENGTH_SHORT).show();
+                    return false; // Or handle this error as needed
+                }
             }
             return false;
         });

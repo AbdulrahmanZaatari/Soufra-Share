@@ -101,8 +101,13 @@ public class MainActivity extends AppCompatActivity {
 
             requestQueue = Volley.newRequestQueue(this);
             fetchTags();
-            fetchMeals(); // Fetch meals (which will then be filtered)
+            fetchMeals();
         }
+    }
+
+    protected void onResume() {
+        super.onResume();
+        fetchMeals();
     }
 
     private void initializeViews() {
@@ -161,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.navigation_dashboard) {
                 SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-                // Use the correct key: "user_id"
+
                 int userId = prefs.getInt("user_id", -1);
 
                 if (userId != -1) {
@@ -194,9 +199,12 @@ public class MainActivity extends AppCompatActivity {
                             Meal meal = parseMeal(mealObject);
                             originalMealList.add(meal); // Add to the original list
                         }
+                        // Sort the originalMealList by created_at in descending order
+                        java.util.Collections.sort(originalMealList);
+
                         // Apply filters which will populate mealList and update adapter
                         applyFilters();
-                        Log.d("FetchMeals", "Finished parsing meals. Original list size: " + originalMealList.size());
+                        Log.d("FetchMeals", "Finished parsing and sorting meals. Original list size: " + originalMealList.size());
                     } catch (JSONException e) {
                         Log.e("FetchMeals", "JSON parsing error", e);
                         Toast.makeText(MainActivity.this, "Error parsing meal data", Toast.LENGTH_SHORT).show();
@@ -340,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
                 currentPriceFilter = "Over $" + minPrice;
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Invalid number format in min price", Toast.LENGTH_SHORT).show();
-                currentPriceFilter = ""; // Clear filter on error
+                currentPriceFilter = "";
             }
         } else if (hasMax) {
             try {
@@ -424,6 +432,7 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject mealObject = response.getJSONObject(i);
                             mealList.add(parseMeal(mealObject));
                         }
+                        java.util.Collections.sort(mealList);
                         mealAdapter.notifyDataSetChanged(); // Update the RecyclerView
                         Log.d("ApplyFilters", "Adapter notified. Displaying " + mealList.size() + " meals.");
                     } catch (JSONException e) {
@@ -442,7 +451,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Meal parseMeal(JSONObject mealObject) throws JSONException {
         // Use optString, optInt, optDouble to handle potential missing fields gracefully
-        return new Meal(
+        Meal meal = new Meal(
                 mealObject.optInt("meal_id"),
                 mealObject.optInt("user_id"),
                 mealObject.optString("name", "N/A"),
@@ -452,13 +461,14 @@ public class MainActivity extends AppCompatActivity {
                 mealObject.optInt("delivery_option", -1),
                 mealObject.optString("description", ""),
                 mealObject.optString("image_paths", ""),
-                mealObject.optString("created_at", ""),
+                mealObject.optString("created_at", ""), // Set the created_at field
                 mealObject.optString("username", "Unknown User"),
                 mealObject.optString("profile_picture", ""),
                 mealObject.optDouble("rating", 0.0)
         );
+        meal.setCreatedAt(mealObject.optString("created_at", "")); // Ensure it's also set using the setter
+        return meal;
     }
-
 
     // --- Inner class for Tag ---
     private static class Tag {

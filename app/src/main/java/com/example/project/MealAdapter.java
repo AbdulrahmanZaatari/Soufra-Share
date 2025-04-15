@@ -22,7 +22,7 @@ import java.util.List;
 public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder> {
 
     private List<Meal> mealList;
-    private String baseUrl = "http://10.0.2.2/soufra_share/uploads/";
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/";
 
     public MealAdapter(List<Meal> mealList) {
         this.mealList = mealList;
@@ -57,7 +57,7 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                 List<String> imagePaths = gson.fromJson(imagePathsJson, listType);
 
                 if (!imagePaths.isEmpty()) {
-                    String imageUrl = baseUrl + imagePaths.get(0);
+                    String imageUrl = baseUrl + "uploads/" + imagePaths.get(0);
                     Log.d("MealAdapter", "Loading meal image from: " + imageUrl);
                     Picasso.get()
                             .load(imageUrl)
@@ -89,15 +89,25 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
                     .error(R.drawable.ic_person)
                     .into(holder.profileImage);
         } else {
-            holder.profileImage.setImageResource(R.drawable.ic_person); // Placeholder if URL is null or empty
+            holder.profileImage.setImageResource(R.drawable.ic_person);
         }
 
-        // Set OnClickListener for the item view
+        // Set OnClickListener for the item view (to MealDetailActivity)
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), MealDetailActivity.class);
                 intent.putExtra("meal", currentMeal); // Pass the Meal object
+                v.getContext().startActivity(intent);
+            }
+        });
+
+        // Set OnClickListener for the username TextView
+        holder.usernameText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), UserProfileActivity.class);
+                intent.putExtra("USER_ID", currentMeal.getUserId()); // Pass the user ID
                 v.getContext().startActivity(intent);
             }
         });

@@ -68,7 +68,6 @@ public class MealDetailActivity extends AppCompatActivity {
         Log.d(TAG, "Retrieved Meal object from intent: " + currentMeal);
 
         if (currentMeal != null) {
-            // Populate views with meal details
             mealNameTextView.setText(currentMeal.getName());
             Log.d(TAG, "Meal Name: " + currentMeal.getName());
             mealDescriptionTextView.setText(currentMeal.getDescription());
@@ -80,7 +79,6 @@ public class MealDetailActivity extends AppCompatActivity {
             mealDeliveryOptionTextView.setText("Delivery Available: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
             Log.d(TAG, "Delivery Option: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
 
-            // Load meal image using Picasso
             String imagePathsJson = currentMeal.getImagePaths();
             if (imagePathsJson != null && !imagePathsJson.isEmpty() && !imagePathsJson.equals("[]")) {
                 try {
@@ -89,7 +87,7 @@ public class MealDetailActivity extends AppCompatActivity {
                     List<String> imagePaths = gson.fromJson(imagePathsJson, listType);
 
                     if (!imagePaths.isEmpty()) {
-                        String imageUrl = baseUrl + imagePaths.get(0);
+                        String imageUrl = baseUrl + "uploads/" + imagePaths.get(0);
                         Log.d(TAG, "Loading meal image from: " + imageUrl);
                         Picasso.get()
                                 .load(imageUrl)
@@ -149,12 +147,11 @@ public class MealDetailActivity extends AppCompatActivity {
                 Log.d(TAG, "goBackButton clicked");
                 Intent intent = new Intent(MealDetailActivity.this, MainActivity.class); // Assuming MainActivity is your orders page
                 startActivity(intent);
-                finish(); // Optional: Finish the current activity
+                finish();
             }
         });
         Log.d(TAG, "goBackButton OnClickListener set");
 
-        // Set click listener for the Cart button
         cartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,7 +167,6 @@ public class MealDetailActivity extends AppCompatActivity {
         Log.d(TAG, "addToCart() called with mealId: " + mealId + ", quantity: " + quantity);
         String url = baseUrl + "cart.php";
         Log.d(TAG, "AddToCart URL: " + url);
-        // ... (rest of your addToCart method remains the same) ...
         com.android.volley.toolbox.StringRequest request = new com.android.volley.toolbox.StringRequest(com.android.volley.Request.Method.POST, url,
                 new com.android.volley.Response.Listener<String>() {
                     @Override

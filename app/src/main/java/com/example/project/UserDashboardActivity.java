@@ -22,12 +22,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -95,8 +97,17 @@ public class UserDashboardActivity extends AppCompatActivity {
         editDetailsButton.setOnClickListener(v -> enableEditMode());
         saveDetailsButton.setOnClickListener(v -> saveUserDetails());
         editProfilePictureButton.setOnClickListener(v -> openImagePicker());
-        orderHistoryButton.setOnClickListener(v -> Toast.makeText(this, "Order History will be implemented later", Toast.LENGTH_SHORT).show());
-        salesReportsButton.setOnClickListener(v -> Toast.makeText(this, "Sales Reports will be implemented later", Toast.LENGTH_SHORT).show());
+        salesReportsButton.setOnClickListener(v -> Toast.makeText(UserDashboardActivity.this, "Sales Reports will be implemented later", Toast.LENGTH_SHORT).show());
+
+        orderHistoryButton.setOnClickListener(v -> {
+            Intent intent = new Intent(UserDashboardActivity.this, OrderHistoryActivity.class);
+            startActivity(intent);
+        });
+        salesReportsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(UserDashboardActivity.this,  SalesReportListActivity.class);
+            startActivity(intent);
+            startActivity(intent);
+        });
     }
 
     private void initializeViews() {
@@ -126,7 +137,7 @@ public class UserDashboardActivity extends AppCompatActivity {
         reviewsRecyclerView = findViewById(R.id.recycler_view_reviews);
         reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         reviewList = new ArrayList<>();
-        reviewAdapter = new ReviewAdapter(reviewList);
+        reviewAdapter = new ReviewAdapter(this, reviewList);
         reviewsRecyclerView.setAdapter(reviewAdapter);
     }
 
@@ -216,7 +227,8 @@ public class UserDashboardActivity extends AppCompatActivity {
                                     reviewObject.getInt("reviewee_id"),
                                     reviewObject.getInt("rating"),
                                     reviewObject.getString("comment"),
-                                    reviewObject.getString("review_date")
+                                    reviewObject.getString("review_date"),
+                                    reviewObject.getString("reviewer_profile_picture")
                             );
                             reviewList.add(review);
                         }
@@ -235,11 +247,15 @@ public class UserDashboardActivity extends AppCompatActivity {
     private void enableEditMode() {
         isEditMode = true;
         setEditMode(true);
+        // Disable the email edit text
+        editEmailEditText.setEnabled(false);
     }
 
     private void disableEditMode() {
         isEditMode = false;
         setEditMode(false);
+        // Re-enable the email edit text when exiting edit mode (optional, depends on desired behavior)
+        editEmailEditText.setEnabled(true);
     }
 
     private void setEditMode(boolean enable) {
@@ -260,7 +276,8 @@ public class UserDashboardActivity extends AppCompatActivity {
     }
 
     private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
         imagePickerLauncher.launch(intent);
     }
 
@@ -275,41 +292,88 @@ public class UserDashboardActivity extends AppCompatActivity {
     private void saveUserDetails() {
         String newUsername = editUsernameEditText.getText().toString().trim();
         String newFullName = editFullNameEditText.getText().toString().trim();
-        String newEmail = editEmailEditText.getText().toString().trim();
+        // Email should not be updated by the user in this implementation
+        String newEmail = emailTextView.getText().toString(); // Use the original email
         String newPhone = editPhoneEditText.getText().toString().trim();
         String newLocation = editLocationEditText.getText().toString().trim();
-        String profilePictureBase64 = bitmapToBase64(selectedProfilePictureBitmap);
 
-        String url = "http://10.0.2.2/Soufra_Share/users.php?action=updateUserDetails";
-        Map<String, String> params = new HashMap<>();
-        params.put("user_id", String.valueOf(userId));
-        params.put("username", newUsername);
-        params.put("full_name", newFullName);
-        params.put("email", newEmail);
-        params.put("phone_num", newPhone);
-        params.put("location", newLocation);
-        if (profilePictureBase64 != null && !profilePictureBase64.isEmpty()) {
-            params.put("profile_picture", profilePictureBase64);
+        String url = "http://10.0.2.2/Soufra_Share/upload_profile_picture.php";
+
+        // Convert Bitmap to byte array
+        byte[] profilePictureBytes = null;
+        if (selectedProfilePictureBitmap != null) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            selectedProfilePictureBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
+            profilePictureBytes = byteArrayOutputStream.toByteArray();
         }
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
+        VolleyMultipartRequest request = new VolleyMultipartRequest(Request.Method.POST, url,
                 response -> {
                     try {
-                        if (response.getBoolean("success")) {
+                        String jsonResponse = new String(response.data);
+                        JSONObject jsonObject = new JSONObject(jsonResponse);
+                        if (jsonObject.getBoolean("success")) {
                             Toast.makeText(UserDashboardActivity.this, "Details updated successfully", Toast.LENGTH_SHORT).show();
                             loadUserDetails();
                             disableEditMode();
                         } else {
-                            Toast.makeText(UserDashboardActivity.this, "Failed to update details: " + response.getString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UserDashboardActivity.this, "Failed to update details: " + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
                         }
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(UserDashboardActivity.this, "Error parsing update response", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(UserDashboardActivity.this, "Error parsing response: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                }, error -> {
-            error.printStackTrace();
-            Toast.makeText(UserDashboardActivity.this, "Error updating user details", Toast.LENGTH_SHORT).show();
-        });
+                },
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(UserDashboardActivity.this, "Error updating user details: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                // Add any necessary headers, like authorization tokens
+                return headers;
+            }
+        };
+
+        // Add string parameters
+        request.addStringParam("user_id", String.valueOf(userId));
+        request.addStringParam("username", newUsername);
+        request.addStringParam("full_name", newFullName);
+        request.addStringParam("email", newEmail);
+        request.addStringParam("phone_num", newPhone);
+        request.addStringParam("location", newLocation);
+
+        // Add file parameter
+        if (profilePictureBytes != null && profilePictureBytes.length > 0) {
+            request.addFile("profile_image", "profile_picture_" + userId + ".jpg", profilePictureBytes, "image/jpeg");
+        }
+
         requestQueue.add(request);
+    }
+
+    // Helper class for Multipart Request Data
+    private static class DataPart {
+        private String filename;
+        private byte[] content;
+        private String type;
+
+        public DataPart(String filename, byte[] content, String type) {
+            this.filename = filename;
+            this.content = content;
+            this.type = type;
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+
+        public byte[] getContent() {
+            return content;
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 }
