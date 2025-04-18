@@ -32,7 +32,7 @@ import java.util.Objects; // For Objects.requireNonNull
 public class EditMealActivity extends AppCompatActivity {
 
     private static final String TAG = "EditMealActivity";
-    private static final String BASE_URL = "http://10.0.2.2/soufra_share/"; // Your Base API URL
+    private static final String BASE_URL = "http://10.0.2.2/soufra_share/";
     private TextInputEditText etName, etPrice, etQuantity, etDescription, etLocation;
     private Spinner spinnerDeliveryOption;
     private Button btnSaveChanges;
@@ -54,11 +54,10 @@ public class EditMealActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
         initializeViews();
 
-        // --- Get Meal Data from Intent ---
         if (getIntent().hasExtra("EDIT_MEAL_DATA")) {
             mealToEdit = (Meal) getIntent().getSerializableExtra("EDIT_MEAL_DATA");
             if (mealToEdit != null) {
-                currentUserId = mealToEdit.getUserId(); // Get user ID from the meal object
+                currentUserId = mealToEdit.getUserId();
                 populateFields();
             } else {
                 handleDataError("Error: Could not deserialize meal data.");
@@ -71,12 +70,10 @@ public class EditMealActivity extends AppCompatActivity {
         setupSaveButton();
     }
 
-    // Handle Up navigation from Toolbar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            // Consider checking for unsaved changes before finishing
-            finish(); // Or onBackPressed();
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -85,14 +82,13 @@ public class EditMealActivity extends AppCompatActivity {
 
     private void initializeViews() {
         etName = findViewById(R.id.edit_text_meal_name);
+        progressBar = findViewById(R.id.progressBar);
         etPrice = findViewById(R.id.edit_text_meal_price);
         etQuantity = findViewById(R.id.edit_text_meal_quantity);
         etDescription = findViewById(R.id.edit_text_meal_description);
         etLocation = findViewById(R.id.edit_text_meal_location);
         spinnerDeliveryOption = findViewById(R.id.spinner_edit_delivery_option);
         btnSaveChanges = findViewById(R.id.button_save_meal_changes);
-
-        // Setup Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, DELIVERY_OPTIONS);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -108,14 +104,11 @@ public class EditMealActivity extends AppCompatActivity {
         etDescription.setText(mealToEdit.getDescription());
         etLocation.setText(mealToEdit.getLocation());
 
-        // Set spinner selection based on the meal's delivery option value
         int deliveryOptionValue = mealToEdit.getDeliveryOption();
-        // This assumes your integer values map directly to the array index (0, 1, 2)
-        // Adjust this logic if your DB values are different
         if (deliveryOptionValue >= 0 && deliveryOptionValue < DELIVERY_OPTIONS.length) {
             spinnerDeliveryOption.setSelection(deliveryOptionValue);
         } else {
-            spinnerDeliveryOption.setSelection(0); // Default to first option if invalid
+            spinnerDeliveryOption.setSelection(0);
             Log.w(TAG,"Invalid delivery option value ("+deliveryOptionValue+") for meal, defaulting spinner.");
         }
 
@@ -126,15 +119,13 @@ public class EditMealActivity extends AppCompatActivity {
     }
 
     private void attemptSaveChanges() {
-        // --- Basic Input Validation ---
         String name = Objects.requireNonNull(etName.getText()).toString().trim();
         String priceStr = Objects.requireNonNull(etPrice.getText()).toString().trim();
         String quantityStr = Objects.requireNonNull(etQuantity.getText()).toString().trim();
         String description = Objects.requireNonNull(etDescription.getText()).toString().trim();
         String location = Objects.requireNonNull(etLocation.getText()).toString().trim();
         int deliveryOptionPosition = spinnerDeliveryOption.getSelectedItemPosition();
-        // Map position back to your integer value (assuming 0, 1, 2)
-        int deliveryOptionValue = deliveryOptionPosition; // Adjust if necessary
+        int deliveryOptionValue = deliveryOptionPosition;
 
 
         if (TextUtils.isEmpty(name)) {
@@ -168,13 +159,10 @@ public class EditMealActivity extends AppCompatActivity {
             showError(etQuantity, "Invalid quantity format"); return;
         }
 
-        // --- Create JSON Request Body ---
+
         JSONObject requestBody = new JSONObject();
         try {
-            // IMPORTANT: Include meal_id for the WHERE clause in the backend UPDATE query
             requestBody.put("meal_id", mealToEdit.getMealId());
-
-            // Include all fields that can be updated
             requestBody.put("user_id", currentUserId);
             requestBody.put("name", name);
             requestBody.put("price", price);
@@ -182,19 +170,13 @@ public class EditMealActivity extends AppCompatActivity {
             requestBody.put("location", location);
             requestBody.put("delivery_option", deliveryOptionValue);
             requestBody.put("description", description);
-            // NOTE: Image paths update is not handled here. Needs separate logic (uploading, path management).
-            // requestBody.put("image_paths", mealToEdit.getImagePaths());
-
         } catch (JSONException e) {
             Log.e(TAG, "JSONException creating update request body", e);
             Toast.makeText(this, "Error creating update data", Toast.LENGTH_SHORT).show();
             return;
         }
-        // -----------------------------
-
-        // --- Send Volley PUT Request ---
         showLoading(true);
-        String url = BASE_URL + "meals.php"; // PUT request to the base endpoint
+        String url = BASE_URL + "meals.php";
 
         Log.d(TAG, "Sending PUT request to: " + url);
         Log.d(TAG, "Request Body: " + requestBody.toString());
@@ -204,15 +186,12 @@ public class EditMealActivity extends AppCompatActivity {
                     showLoading(false);
                     Log.d(TAG, "Update Response: " + response.toString());
                     try {
-                        // Assuming response contains {'message': '...'}
                         String message = response.optString("message", "Meal updated successfully!");
                         Toast.makeText(EditMealActivity.this, message, Toast.LENGTH_SHORT).show();
-
-                        // Set result OK so PostingsActivity knows to refresh
                         setResult(RESULT_OK);
-                        finish(); // Close activity on success
+                        finish();
 
-                    } catch (Exception e) { // Catch potential JSONException or others
+                    } catch (Exception e) {
                         Log.e(TAG, "Error parsing update response", e);
                         Toast.makeText(EditMealActivity.this,"Update successful (response parsing issue).", Toast.LENGTH_SHORT).show();
                         setResult(RESULT_OK); // Assume success if we got a 2xx response
@@ -221,7 +200,7 @@ public class EditMealActivity extends AppCompatActivity {
                 },
                 error -> {
                     showLoading(false);
-                    handleVolleyError(error); // Use common error handler
+                    handleVolleyError(error);
                 });
 
         requestQueue.add(updateRequest);
@@ -229,13 +208,7 @@ public class EditMealActivity extends AppCompatActivity {
     }
 
     private void showError(TextInputEditText field, String message) {
-        // If using TextInputLayout, set error there for better UI
-        // ViewParent parent = field.getParent().getParent();
-        // if (parent instanceof TextInputLayout) {
-        //    ((TextInputLayout) parent).setError(message);
-        // } else {
         field.setError(message);
-        // }
         field.requestFocus();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); // Also show toast
     }
@@ -244,6 +217,7 @@ public class EditMealActivity extends AppCompatActivity {
     private void showLoading(boolean isLoading) {
         if (isLoading) {
             progressBar.setVisibility(View.VISIBLE);
+            btnSaveChanges.setEnabled(false);
             btnSaveChanges.setEnabled(false);
         } else {
             progressBar.setVisibility(View.GONE);

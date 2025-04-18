@@ -91,11 +91,11 @@ public class MealDetailActivity extends AppCompatActivity {
                         Log.d(TAG, "Loading meal image from: " + imageUrl);
                         Picasso.get()
                                 .load(imageUrl)
-                                .placeholder(R.drawable.sushi) // Placeholder image while loading
-                                .error(R.drawable.sushi)       // Error image if loading fails
+                                .placeholder(R.drawable.sushi)
+                                .error(R.drawable.sushi)
                                 .into(mealImageView);
                     } else {
-                        mealImageView.setImageResource(R.drawable.sushi); // Placeholder if no image paths
+                        mealImageView.setImageResource(R.drawable.sushi);
                     }
 
                 } catch (Exception e) {

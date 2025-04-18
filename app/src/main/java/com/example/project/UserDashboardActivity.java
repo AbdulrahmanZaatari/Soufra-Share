@@ -1,18 +1,14 @@
 package com.example.project;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,17 +18,22 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// Keep Volley imports
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
+// Remove unused StringRequest
+// import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
+// Remove unused Glide
+// import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,11 +48,14 @@ import java.util.Map;
 public class UserDashboardActivity extends AppCompatActivity {
 
     private int userId;
-    private TextView usernameTextView, fullNameTextView, emailTextView, phoneTextView, locationTextView;
+    // Add TextView and EditText for 'about'
+    private TextView usernameTextView, fullNameTextView, emailTextView, phoneTextView, locationTextView, aboutTextView;
+    private EditText editUsernameEditText, editFullNameEditText, editEmailEditText, editPhoneEditText, editLocationEditText, editAboutEditText;
+
     private ImageView profilePictureImageView;
     private RatingBar ratingBar;
     private Button editDetailsButton, saveDetailsButton, orderHistoryButton, salesReportsButton, editProfilePictureButton;
-    private EditText editUsernameEditText, editFullNameEditText, editEmailEditText, editPhoneEditText, editLocationEditText;
+
     private BottomNavigationView bottomNavigationView;
     private RecyclerView reviewsRecyclerView;
     private ReviewAdapter reviewAdapter;
@@ -68,10 +72,14 @@ public class UserDashboardActivity extends AppCompatActivity {
                             try {
                                 selectedProfilePictureBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                                 profilePictureImageView.setImageBitmap(selectedProfilePictureBitmap);
+                                Log.d("UserDashboard", "New profile picture selected."); // Keep useful logs
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                e.printStackTrace(); // Keep stack trace log for debugging
                                 Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                                selectedProfilePictureBitmap = null;
                             }
+                        } else {
+                            Log.d("UserDashboard", "Image picking cancelled or failed."); // Keep useful logs
                         }
                     });
 
@@ -95,7 +103,7 @@ public class UserDashboardActivity extends AppCompatActivity {
         loadUserReviews();
 
         editDetailsButton.setOnClickListener(v -> enableEditMode());
-        saveDetailsButton.setOnClickListener(v -> saveUserDetails());
+        saveDetailsButton.setOnClickListener(v -> saveUserDetails()); // This triggers the save process
         editProfilePictureButton.setOnClickListener(v -> openImagePicker());
         salesReportsButton.setOnClickListener(v -> Toast.makeText(UserDashboardActivity.this, "Sales Reports will be implemented later", Toast.LENGTH_SHORT).show());
 
@@ -104,8 +112,7 @@ public class UserDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
         salesReportsButton.setOnClickListener(v -> {
-            Intent intent = new Intent(UserDashboardActivity.this,  SalesReportListActivity.class);
-            startActivity(intent);
+            Intent intent = new Intent(UserDashboardActivity.this, SalesReportListActivity.class);
             startActivity(intent);
         });
     }
@@ -116,6 +123,8 @@ public class UserDashboardActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.text_email);
         phoneTextView = findViewById(R.id.text_phone);
         locationTextView = findViewById(R.id.text_location);
+        aboutTextView = findViewById(R.id.text_about); // Initialize About TextView
+
         profilePictureImageView = findViewById(R.id.image_profile_picture);
         ratingBar = findViewById(R.id.rating_bar);
         editDetailsButton = findViewById(R.id.button_edit_details);
@@ -130,9 +139,10 @@ public class UserDashboardActivity extends AppCompatActivity {
         editEmailEditText = findViewById(R.id.edit_text_email);
         editPhoneEditText = findViewById(R.id.edit_text_phone);
         editLocationEditText = findViewById(R.id.edit_text_location);
+        editAboutEditText = findViewById(R.id.edit_text_about); // Initialize About EditText
 
-        // Initially hide edit views and save button
         setEditMode(false);
+        editEmailEditText.setEnabled(false); // Ensure email is always disabled for editing
 
         reviewsRecyclerView = findViewById(R.id.recycler_view_reviews);
         reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -146,11 +156,13 @@ public class UserDashboardActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.navigation_orders) {
+                selectedProfilePictureBitmap = null;
                 Intent intent = new Intent(UserDashboardActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
                 return true;
             } else if (id == R.id.navigation_postings) {
+                selectedProfilePictureBitmap = null;
                 Intent intent = new Intent(UserDashboardActivity.this, PostingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
@@ -165,49 +177,72 @@ public class UserDashboardActivity extends AppCompatActivity {
     private void loadUserDetails() {
         String url = "http://10.0.2.2/Soufra_Share/users.php?id=" + userId;
         Log.d("UserDashboard", "Loading user details from URL: " + url);
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     Log.d("UserDashboard", "User details response: " + response.toString());
                     try {
-                        usernameTextView.setText(response.getString("username"));
-                        fullNameTextView.setText(response.getString("full_name"));
-                        emailTextView.setText(response.getString("email"));
-                        phoneTextView.setText(response.getString("phone_num"));
-                        locationTextView.setText(response.getString("location"));
-
+                        usernameTextView.setText(response.optString("username"));
+                        fullNameTextView.setText(response.optString("full_name"));
+                        emailTextView.setText(response.optString("email"));
+                        phoneTextView.setText(response.optString("phone_num", "N/A"));
+                        locationTextView.setText(response.optString("location", "N/A"));
+                        aboutTextView.setText(response.optString("about", "No description provided."));
                         if (response.has("rating") && !response.isNull("rating")) {
-                            ratingBar.setRating((float) response.getDouble("rating"));
+                            ratingBar.setRating((float) response.optDouble("rating", 0.0));
                         } else {
                             ratingBar.setRating(0.0f);
                         }
 
-                        String profilePictureUrl = response.optString("profile_picture");
-                        if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
-                            Glide.with(UserDashboardActivity.this)
-                                    .load("http://10.0.2.2/Soufra_Share/" + profilePictureUrl)
-                                    .placeholder(R.drawable.ic_person)
+                        // Load profile picture using Picasso
+                        String profilePicturePath = response.optString("profile_picture");
+                        if (profilePicturePath != null && !profilePicturePath.isEmpty() && !profilePicturePath.equals("null")) { // Also check for string "null" if PHP sends it like that
+                            String fullImageUrl = "http://10.0.2.2/Soufra_Share/" + profilePicturePath;
+                            Picasso.get()
+                                    .load(fullImageUrl)
+                                    .placeholder(R.drawable.ic_person) // Placeholder while loading
                                     .error(R.drawable.ic_person)
                                     .into(profilePictureImageView);
+                            Log.d("UserDashboard", "Attempting to load PFP from URL: " + fullImageUrl);
                         } else {
                             profilePictureImageView.setImageResource(R.drawable.ic_person);
+                            Log.d("UserDashboard", "No PFP path found or path is empty, showing default.");
                         }
 
-                        // Set initial values for edit texts
-                        editUsernameEditText.setText(response.getString("username"));
-                        editFullNameEditText.setText(response.getString("full_name"));
-                        editEmailEditText.setText(response.getString("email"));
-                        editPhoneEditText.setText(response.getString("phone_num"));
-                        editLocationEditText.setText(response.getString("location"));
 
-                    } catch (JSONException e) {
-                        Log.e("UserDashboard", "Error parsing user details: " + e.getMessage());
-                        e.printStackTrace();
-                        Toast.makeText(UserDashboardActivity.this, "Error parsing user details", Toast.LENGTH_SHORT).show();
+                        // Set initial values for edit texts (for edit mode)
+                        editUsernameEditText.setText(response.optString("username"));
+                        editFullNameEditText.setText(response.optString("full_name"));
+                        editEmailEditText.setText(response.optString("email"));
+                        editPhoneEditText.setText(response.optString("phone_num"));
+                        editLocationEditText.setText(response.optString("location"));
+                        editAboutEditText.setText(response.optString("about"));
+                        selectedProfilePictureBitmap = null;
+
                     }
+                    catch (Exception e) {
+                        Log.e("UserDashboard", "Unexpected error in loadUserDetails onResponse: " + e.getMessage());
+                        e.printStackTrace();
+                        Toast.makeText(UserDashboardActivity.this, "Error processing user data", Toast.LENGTH_SHORT).show();
+                    }
+
                 }, error -> {
-            Log.e("UserDashboard", "Error loading user details: " + error.getMessage());
-            error.printStackTrace();
-            Toast.makeText(UserDashboardActivity.this, "Error loading user details", Toast.LENGTH_SHORT).show();
+            Log.e("UserDashboard", "Error loading user details: " + error.toString());
+            String errorMessage = "Error loading user details";
+            if (error.networkResponse != null) {
+                errorMessage += ": Status Code " + error.networkResponse.statusCode;
+                try {
+                    String responseBody = new String(error.networkResponse.data, "utf-8");
+                    Log.e("UserDashboard", "Load error response body: " + responseBody);
+                    JSONObject errorJson = new JSONObject(responseBody);
+                    if (errorJson.has("message")) {
+                        errorMessage += " - " + errorJson.getString("message");
+                    }
+                } catch (Exception e) { /* ignore parsing error */ }
+            } else {
+                errorMessage += ": " + error.getMessage();
+            }
+            Toast.makeText(UserDashboardActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
         });
         requestQueue.add(request);
     }
@@ -221,14 +256,14 @@ public class UserDashboardActivity extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject reviewObject = response.getJSONObject(i);
                             Review review = new Review(
-                                    reviewObject.getInt("review_id"),
-                                    reviewObject.getInt("reviewer_id"),
-                                    reviewObject.getString("reviewer_username"),
-                                    reviewObject.getInt("reviewee_id"),
-                                    reviewObject.getInt("rating"),
-                                    reviewObject.getString("comment"),
-                                    reviewObject.getString("review_date"),
-                                    reviewObject.getString("reviewer_profile_picture")
+                                    reviewObject.optInt("review_id"),
+                                    reviewObject.optInt("reviewer_id"),
+                                    reviewObject.optString("reviewer_username"),
+                                    reviewObject.optInt("reviewee_id"),
+                                    reviewObject.optInt("rating"),
+                                    reviewObject.optString("comment"),
+                                    reviewObject.optString("review_date"),
+                                    reviewObject.optString("reviewer_profile_picture")
                             );
                             reviewList.add(review);
                         }
@@ -247,15 +282,15 @@ public class UserDashboardActivity extends AppCompatActivity {
     private void enableEditMode() {
         isEditMode = true;
         setEditMode(true);
-        // Disable the email edit text
         editEmailEditText.setEnabled(false);
+        selectedProfilePictureBitmap = null;
     }
 
     private void disableEditMode() {
         isEditMode = false;
         setEditMode(false);
-        // Re-enable the email edit text when exiting edit mode (optional, depends on desired behavior)
         editEmailEditText.setEnabled(true);
+        selectedProfilePictureBitmap = null;
     }
 
     private void setEditMode(boolean enable) {
@@ -264,15 +299,18 @@ public class UserDashboardActivity extends AppCompatActivity {
         emailTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
         phoneTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
         locationTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
-        editDetailsButton.setVisibility(enable ? View.GONE : View.VISIBLE);
-        editProfilePictureButton.setVisibility(enable ? View.VISIBLE : View.GONE);
-        saveDetailsButton.setVisibility(enable ? View.VISIBLE : View.GONE);
+        aboutTextView.setVisibility(enable ? View.GONE : View.VISIBLE); // Toggle About TextView
 
         editUsernameEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editFullNameEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editEmailEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editPhoneEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editLocationEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
+        editAboutEditText.setVisibility(enable ? View.VISIBLE : View.GONE); // Toggle About EditText
+
+        editDetailsButton.setVisibility(enable ? View.GONE : View.VISIBLE);
+        saveDetailsButton.setVisibility(enable ? View.VISIBLE : View.GONE);
+        editProfilePictureButton.setVisibility(enable ? View.VISIBLE : View.GONE);
     }
 
     private void openImagePicker() {
@@ -281,99 +319,155 @@ public class UserDashboardActivity extends AppCompatActivity {
         imagePickerLauncher.launch(intent);
     }
 
-    private String bitmapToBase64(Bitmap bitmap) {
-        if (bitmap == null) return null;
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream); // Adjust quality as needed
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
     private void saveUserDetails() {
         String newUsername = editUsernameEditText.getText().toString().trim();
         String newFullName = editFullNameEditText.getText().toString().trim();
-        // Email should not be updated by the user in this implementation
-        String newEmail = emailTextView.getText().toString(); // Use the original email
+        String newEmail = emailTextView.getText().toString();
         String newPhone = editPhoneEditText.getText().toString().trim();
         String newLocation = editLocationEditText.getText().toString().trim();
+        String newAbout = editAboutEditText.getText().toString().trim(); // Get text from About EditText
 
-        String url = "http://10.0.2.2/Soufra_Share/upload_profile_picture.php";
 
-        // Convert Bitmap to byte array
-        byte[] profilePictureBytes = null;
-        if (selectedProfilePictureBitmap != null) {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            selectedProfilePictureBitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream);
-            profilePictureBytes = byteArrayOutputStream.toByteArray();
+        String url = "http://10.0.2.2/Soufra_Share/users.php?action=updateUserDetails";
+
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("user_id", userId);
+            requestBody.put("username", newUsername);
+            requestBody.put("full_name", newFullName);
+            requestBody.put("email", newEmail);
+            requestBody.put("phone_num", newPhone);
+            requestBody.put("location", newLocation);
+            requestBody.put("about", newAbout); // Include 'about' in the JSON body
+
+        } catch (JSONException e) {
+            e.printStackTrace(); // Keep stack trace log for debugging
+            Toast.makeText(UserDashboardActivity.this, "Error creating JSON request for text update", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        VolleyMultipartRequest request = new VolleyMultipartRequest(Request.Method.POST, url,
+        JsonObjectRequest textUpdateRequest = new JsonObjectRequest(Request.Method.POST, url, requestBody,
                 response -> {
+                    Log.d("UserDashboard", "Text update response: " + response.toString()); // Keep useful logs
                     try {
-                        String jsonResponse = new String(response.data);
-                        JSONObject jsonObject = new JSONObject(jsonResponse);
-                        if (jsonObject.getBoolean("success")) {
-                            Toast.makeText(UserDashboardActivity.this, "Details updated successfully", Toast.LENGTH_SHORT).show();
-                            loadUserDetails();
-                            disableEditMode();
+                        String message = response.optString("message", "Unknown response");
+                        if (response.optBoolean("success", true)) {
+                            Toast.makeText(UserDashboardActivity.this, "Text details updated successfully", Toast.LENGTH_SHORT).show();
+                            if (selectedProfilePictureBitmap != null) {
+                                Log.d("UserDashboard", "Text update successful, proceeding to upload PFP."); // Keep useful logs
+                                uploadProfilePicture();
+                            } else {
+                                Log.d("UserDashboard", "Text update successful, no new PFP selected."); // Keep useful logs
+                                Toast.makeText(UserDashboardActivity.this, "Details updated successfully", Toast.LENGTH_SHORT).show();
+                                loadUserDetails();
+                                disableEditMode();
+                            }
                         } else {
-                            Toast.makeText(UserDashboardActivity.this, "Failed to update details: " + jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UserDashboardActivity.this, "Failed to update text details: " + message, Toast.LENGTH_SHORT).show();
                         }
+
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(UserDashboardActivity.this, "Error parsing response: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace(); // Keep stack trace log for debugging
+                        Toast.makeText(UserDashboardActivity.this, "Error processing text update response", Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
-                    error.printStackTrace();
-                    Toast.makeText(UserDashboardActivity.this, "Error updating user details: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                // Add any necessary headers, like authorization tokens
-                return headers;
-            }
-        };
+                    Log.e("UserDashboard", "Error updating text details: " + error.toString()); // Keep error logs
+                    String errorMessage = "Error updating text details";
+                    if (error.networkResponse != null) {
+                        errorMessage += ": Status Code " + error.networkResponse.statusCode;
+                        try {
+                            String responseBody = new String(error.networkResponse.data, "utf-8");
+                            Log.e("UserDashboard", "Text update error response body: " + responseBody); // Keep error logs
+                            JSONObject errorJson = new JSONObject(responseBody);
+                            if (errorJson.has("message")) {
+                                errorMessage += " - " + errorJson.getString("message");
+                            }
+                        } catch (Exception e) { /* ignore parsing error */ }
+                    } else {
+                        errorMessage += ": " + error.getMessage();
+                    }
+                    Toast.makeText(UserDashboardActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                });
 
-        // Add string parameters
-        request.addStringParam("user_id", String.valueOf(userId));
-        request.addStringParam("username", newUsername);
-        request.addStringParam("full_name", newFullName);
-        request.addStringParam("email", newEmail);
-        request.addStringParam("phone_num", newPhone);
-        request.addStringParam("location", newLocation);
-
-        // Add file parameter
-        if (profilePictureBytes != null && profilePictureBytes.length > 0) {
-            request.addFile("profile_image", "profile_picture_" + userId + ".jpg", profilePictureBytes, "image/jpeg");
-        }
-
-        requestQueue.add(request);
+        requestQueue.add(textUpdateRequest);
     }
 
-    // Helper class for Multipart Request Data
-    private static class DataPart {
-        private String filename;
-        private byte[] content;
-        private String type;
+    private void uploadProfilePicture() {
+        if (selectedProfilePictureBitmap == null) {
+            Log.d("UserDashboard", "No new profile picture selected for upload."); // Keep useful logs
+            Toast.makeText(UserDashboardActivity.this, "No new picture selected.", Toast.LENGTH_SHORT).show();
+            loadUserDetails();
+            disableEditMode();
+            return;
+        }
+        String url = "http://10.0.2.2/Soufra_Share/upload_profile_picture.php";
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        try {
+                            String jsonResponse = new String(response.data);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            Log.d("UserDashboard", "PFP upload response: " + jsonResponse); // Keep useful logs
 
-        public DataPart(String filename, byte[] content, String type) {
-            this.filename = filename;
-            this.content = content;
-            this.type = type;
+                            if (jsonObject.optBoolean("success", false)) {
+                                Toast.makeText(UserDashboardActivity.this, "Profile picture updated successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Keep original error message from PHP response
+                                Toast.makeText(UserDashboardActivity.this, "Failed to upload profile picture: " + jsonObject.optString("message", "Unknown error"), Toast.LENGTH_SHORT).show();
+                            }
+                            loadUserDetails(); // Always reload after PFP attempt (success or fail)
+                            disableEditMode(); // Always exit edit mode after PFP attempt
+                            selectedProfilePictureBitmap = null; // Clear bitmap after attempt
+                        } catch (Exception e) {
+                            e.printStackTrace(); // Keep stack trace log for debugging
+                            Toast.makeText(UserDashboardActivity.this, "Error parsing PFP upload response: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            loadUserDetails();
+                            disableEditMode();
+                            selectedProfilePictureBitmap = null;
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace(); // Keep stack trace log for debugging
+                        String errorMessage = "Error uploading profile picture";
+                        if (error.networkResponse != null) {
+                            errorMessage += ": Status Code " + error.networkResponse.statusCode;
+                            try {
+                                String responseBody = new String(error.networkResponse.data, "utf-8");
+                                Log.e("UserDashboard", "PFP upload error response body: " + responseBody); // Keep error logs
+                                JSONObject errorJson = new JSONObject(responseBody);
+                                if (errorJson.has("message")) {
+                                    errorMessage += " - " + errorJson.getString("message");
+                                }
+                            } catch (Exception e) { /* ignore parsing error */ }
+                        } else {
+                            errorMessage += ": " + error.getMessage();
+                        }
+                        Toast.makeText(UserDashboardActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        loadUserDetails();
+                        disableEditMode();
+                        selectedProfilePictureBitmap = null;
+                    }
+                });
+
+        multipartRequest.addStringParam("user_id", String.valueOf(userId));
+        Log.d("UserDashboard", "Adding user_id param to PFP upload: " + userId); // Keep useful logs
+
+        if (selectedProfilePictureBitmap != null) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            selectedProfilePictureBitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream);
+            byte[] profilePictureBytes = byteArrayOutputStream.toByteArray();
+            String filename = "profile_picture_" + userId + "_" + System.currentTimeMillis() + ".jpg";
+            multipartRequest.addFile("profile_image", filename, profilePictureBytes, "image/jpeg");
+            Log.d("UserDashboard", "Adding profile_image file to PFP upload with filename: " + filename); // Keep useful logs
         }
 
-        public String getFilename() {
-            return filename;
-        }
-
-        public byte[] getContent() {
-            return content;
-        }
-
-        public String getType() {
-            return type;
-        }
+        requestQueue.add(multipartRequest);
+        Log.d("UserDashboard", "PFP upload request added to queue.");
     }
+
 }

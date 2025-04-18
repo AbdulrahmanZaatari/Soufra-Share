@@ -30,12 +30,11 @@ public class SalesReportListActivity extends AppCompatActivity {
     private String PREF_NAME = "MyAppPrefs";
     private SalesReportListAdapter adapter;
     private List<SalesRecord> salesRecordList;
-    private String baseUrl = "http://10.0.2.2/Soufra_Share/"; // Your base URL
-
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sales_report_list); // Make sure you have this layout
+        setContentView(R.layout.activity_sales_report_list);
 
         recyclerView = findViewById(R.id.recyclerViewSalesReports);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -48,7 +47,7 @@ public class SalesReportListActivity extends AppCompatActivity {
     }
 
     private void fetchSalesDates() {
-        String url = baseUrl + "get_sales_dates.php"; // Your PHP file to fetch sales dates
+        String url = baseUrl + "get_sales_dates.php";
 
         int loggedInUserId = getLoggedInUserId();
 

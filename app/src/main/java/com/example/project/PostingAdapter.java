@@ -8,15 +8,11 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-// Remove any Glide imports if they exist!
 import com.squareup.picasso.Picasso;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +25,7 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
     private Context context;
     private OnPostingActionListener listener;
 
-    private String baseUrl = "http://10.0.2.2/Soufra_Share/";
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/"; // <-- Check this URL
 
     public interface OnPostingActionListener {
         void onEditClick(Meal meal);
@@ -45,8 +41,9 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
     @NonNull
     @Override
     public PostingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Ensure this matches your layout file name for a single posting item
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_posting_card, parent, false);
+                .inflate(R.layout.item_posting_card, parent, false); // <-- Check this layout file name
         return new PostingViewHolder(view);
     }
 
@@ -55,14 +52,16 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
         Meal currentMeal = postingList.get(position);
         if (currentMeal == null) {
             Log.e(TAG, "Meal object at position " + position + " is null.");
-            return;
+            return; // Skip binding if the meal object is null
         }
 
-        // Logging details for debugging
+        // Logging details for debugging the data received
         Log.d(TAG, "Binding meal - Name: " + currentMeal.getName() +
+                ", ID: " + currentMeal.getMealId() +
                 ", Price: " + currentMeal.getPrice() +
                 ", Quantity: " + currentMeal.getQuantity() +
-                ", Description: " + currentMeal.getDescription());
+                ", ImagePathsJson: " + currentMeal.getImagePaths());
+
 
         holder.textViewName.setText(currentMeal.getName());
         holder.textViewPrice.setText(String.format(Locale.getDefault(), "$%.2f", currentMeal.getPrice()));
@@ -71,30 +70,35 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
 
         // Load the image using Picasso with @drawable/sushi as placeholder and error fallback
         String imagePathsJson = currentMeal.getImagePaths();
+
+        List<String> imagePaths = null; // Initialize imagePaths to null
         if (imagePathsJson != null && !imagePathsJson.isEmpty() && !imagePathsJson.equals("[]")) {
             try {
                 Gson gson = new Gson();
                 Type listType = new TypeToken<List<String>>() {}.getType();
-                List<String> imagePaths = gson.fromJson(imagePathsJson, listType);
+                // gson.fromJson can return null if the JSON string is "null" or malformed
+                imagePaths = gson.fromJson(imagePathsJson, listType);
 
-                if (!imagePaths.isEmpty()) {
-                    // Build the URL with the first image (adjust as needed if multiple images exist)
-                    String imageUrl = baseUrl + "uploads/" + imagePaths.get(0);
-                    Log.d(TAG, "Loading posting image from: " + imageUrl);
-                    Picasso.get()
-                            .load(imageUrl)
-                            .placeholder(R.drawable.sushi) // use sushi as placeholder
-                            .error(R.drawable.sushi)       // use sushi for error fallback
-                            .into(holder.imageViewPosting);
-                } else {
-                    holder.imageViewPosting.setImageResource(R.drawable.sushi);
-                }
             } catch (Exception e) {
-                Log.e(TAG, "Error parsing image paths: " + e.getMessage());
-                holder.imageViewPosting.setImageResource(R.drawable.sushi);
+                Log.e(TAG, "Error parsing image paths JSON for meal ID " + currentMeal.getMealId() + ": " + e.getMessage());
+                // If parsing fails, imagePaths remains null, which is handled below
             }
+        }
+
+        // *** IMPORTANT FIX: Check if imagePaths is null BEFORE calling isEmpty() ***
+        if (imagePaths != null && !imagePaths.isEmpty()) {
+            // Assuming image filenames are relative to the uploads directory within your base URL
+            String imageUrl = baseUrl + "uploads/" + imagePaths.get(0); // Get the first image URL
+            Log.d(TAG, "Loading posting image from: " + imageUrl);
+            Picasso.get()
+                    .load(imageUrl)
+                    .placeholder(R.drawable.sushi) // use sushi as placeholder
+                    .error(R.drawable.sushi)       // use sushi for error fallback
+                    .into(holder.imageViewPosting);
         } else {
-            holder.imageViewPosting.setImageResource(R.drawable.sushi);
+            // Set placeholder if imagePaths is null, empty, or the original JSON was "[]"
+            Log.d(TAG, "imagePaths is null or empty for meal ID " + currentMeal.getMealId() + ", setting default image.");
+            holder.imageViewPosting.setImageResource(R.drawable.sushi); // Set placeholder
         }
 
         // Set up the Edit button action.
@@ -130,9 +134,10 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
         return count;
     }
 
+    // Method to update the list of postings and notify the adapter
     public void updatePostings(List<Meal> newPostings) {
         Log.d(TAG, "updatePostings() called with " + (newPostings != null ? newPostings.size() : 0) + " items.");
-        this.postingList = new ArrayList<>(newPostings);
+        this.postingList = new ArrayList<>(newPostings); // Create a new list to avoid modifying the original
         notifyDataSetChanged();
         Log.d(TAG, "updatePostings() - notifyDataSetChanged() called.");
     }
@@ -140,20 +145,25 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
     // Method to remove an item from the postings list after deletion
     public void removeItem(int position) {
         if (postingList != null && position >= 0 && position < postingList.size()) {
+            Log.d(TAG, "Removing item at position: " + position + " (Meal ID: " + postingList.get(position).getMealId() + ")");
             postingList.remove(position);
             notifyItemRemoved(position);
+            // You might need notifyItemRangeChanged(position, postingList.size()) if item positions shift visually
         } else {
             Log.w(TAG, "Attempted to remove item at invalid position: " + position);
         }
     }
 
+    // ViewHolder class
     public static class PostingViewHolder extends RecyclerView.ViewHolder {
+        // Declare your views here, matching the IDs in item_posting_card.xml
         ImageView imageViewPosting;
         TextView textViewName, textViewPrice, textViewQuantity, textViewDescription;
         ImageButton buttonEdit, buttonDelete;
 
         public PostingViewHolder(@NonNull View itemView) {
             super(itemView);
+
             imageViewPosting = itemView.findViewById(R.id.image_view_posting);
             textViewName = itemView.findViewById(R.id.text_view_posting_name);
             textViewPrice = itemView.findViewById(R.id.text_view_posting_price);

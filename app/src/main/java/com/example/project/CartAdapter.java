@@ -1,6 +1,7 @@
 package com.example.project;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private Context context;
     private List<CartItem> cartItems;
     private OnItemClickListener deleteClickListener;
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/uploads/"; // Base URL for images
 
     public interface OnItemClickListener {
         void onDeleteClick(int position);
@@ -46,11 +48,28 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.mealPriceTextView.setText(String.format("$%.2f", currentItem.getPrice()));
         holder.quantityTextView.setText("Qty: " + currentItem.getQuantity());
 
-        Glide.with(context)
-                .load(currentItem.getImageUrl())
-                .placeholder(R.drawable.sushi)
-                .error(R.drawable.meal)
-                .into(holder.mealImageView);
+        String imageUrl = currentItem.getImageUrl();
+        if (imageUrl != null && !imageUrl.isEmpty() && !imageUrl.equals("[]")) {
+            try {
+                String cleanedImageUrl = imageUrl.replaceAll("\\[\"", "").replaceAll("\"\\]", "");
+                String fullImageUrl = baseUrl + cleanedImageUrl;
+                Log.d("CartAdapter", "Loading image from: " + fullImageUrl);
+                Glide.with(context)
+                        .load(fullImageUrl)
+                        .placeholder(R.drawable.sushi)
+                        .error(R.drawable.meal)
+                        .into(holder.mealImageView);
+            } catch (Exception e) {
+                Log.e("CartAdapter", "Error loading image for meal: " + currentItem.getMealName(), e);
+                Glide.with(context)
+                        .load(R.drawable.sushi)
+                        .into(holder.mealImageView);
+            }
+        } else {
+            Glide.with(context)
+                    .load(R.drawable.sushi)
+                    .into(holder.mealImageView);
+        }
 
         holder.deleteButton.setOnClickListener(v -> {
             if (deleteClickListener != null) {

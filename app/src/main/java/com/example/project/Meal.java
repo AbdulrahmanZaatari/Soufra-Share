@@ -9,6 +9,7 @@ import android.util.Log;
 
 // Implement Serializable and Comparable
 public class Meal implements Serializable, Comparable<Meal> {
+    private static final long serialVersionUID = 1L;
     private int mealId;
     private int userId;
     private String name;

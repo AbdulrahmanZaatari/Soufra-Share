@@ -48,7 +48,6 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
         holder.mealDeliveryOptionText.setText("Delivery: " + (currentMeal.getDeliveryOption() == 1 ? "Yes" : "No"));
         holder.mealQuantityText.setText("Qty: " + currentMeal.getQuantity());
 
-        // Load meal image
         String imagePathsJson = currentMeal.getImagePaths();
         if (imagePathsJson != null && !imagePathsJson.isEmpty() && !imagePathsJson.equals("[]")) {
             try {
@@ -76,7 +75,6 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             holder.mealImageView.setImageResource(R.drawable.sushi);
         }
 
-        // Load profile picture
         String profilePictureUrl = currentMeal.getProfilePicture();
         Log.d("MealAdapter", "Profile picture URL from Meal object: " + profilePictureUrl);
 
@@ -92,7 +90,6 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             holder.profileImage.setImageResource(R.drawable.ic_person);
         }
 
-        // Set OnClickListener for the item view (to MealDetailActivity)
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +99,6 @@ public class MealAdapter extends RecyclerView.Adapter<MealAdapter.MealViewHolder
             }
         });
 
-        // Set OnClickListener for the username TextView
         holder.usernameText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -165,7 +165,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserMeals() {
-        String url = URL_MEALS_BY_USER + userId + "&action=getUserMealsWithDetails"; // Updated URL
+        String url = URL_MEALS_BY_USER + userId + "&action=getUserMealsWithDetails";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override

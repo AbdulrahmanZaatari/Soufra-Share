@@ -75,7 +75,6 @@ public class CartActivity extends AppCompatActivity {
         cartRecyclerView.setAdapter(cartAdapter);
         Log.d(TAG, "onCreate: CartAdapter set to RecyclerView");
 
-        // Set up delete click listener
         cartAdapter.setOnDeleteClickListener(position -> {
             Log.d(TAG, "onCreate: Delete click listener triggered for position: " + position);
             CartItem itemToDelete = cartItems.get(position);
@@ -93,7 +92,6 @@ public class CartActivity extends AppCompatActivity {
         });
         Log.d(TAG, "onCreate: Order Now click listener set");
 
-        // Set up back button click listener
         backButton.setOnClickListener(v -> {
             Log.d(TAG, "onCreate: Back button clicked");
             finish();
@@ -124,8 +122,8 @@ public class CartActivity extends AppCompatActivity {
         Log.d(TAG, "processOrderForMultipleSellers: Starting order processing for multiple sellers");
         final Map<Integer, List<CartItem>> itemsBySeller = new HashMap<>();
         final int totalItems = cartItems.size();
-        final boolean[] sellerFetchCompleted = new boolean[totalItems]; // To track completion of seller ID fetching
-        final int[] itemsProcessed = {0}; // Counter for processed items
+        final boolean[] sellerFetchCompleted = new boolean[totalItems];
+        final int[] itemsProcessed = {0};
 
         for (int i = 0; i < cartItems.size(); i++) {
             final int index = i;
@@ -160,7 +158,6 @@ public class CartActivity extends AppCompatActivity {
                             sellerFetchCompleted[index] = true;
                             itemsProcessed[0]++;
                             if (itemsProcessed[0] == totalItems) {
-                                // All seller IDs have been fetched, now place orders
                                 placeOrdersBySeller(itemsBySeller);
                             }
                         }
@@ -170,7 +167,6 @@ public class CartActivity extends AppCompatActivity {
                 sellerFetchCompleted[index] = true;
                 itemsProcessed[0]++;
                 if (itemsProcessed[0] == totalItems) {
-                    // All (attempted) seller ID fetches completed
                     placeOrdersBySeller(itemsBySeller);
                 }
             });
@@ -209,7 +205,6 @@ public class CartActivity extends AppCompatActivity {
                         processOrderItemsForSeller(sellerId, items);
                     } else {
                         Log.w(TAG, "placeOrderForSeller: Not all items available for seller ID " + sellerId);
-                        // Optionally, you can inform the user about all unavailable items here
                     }
                 }
             });
@@ -233,10 +228,10 @@ public class CartActivity extends AppCompatActivity {
 
         Gson gson = new Gson();
         String orderItemsJson = gson.toJson(orderItems);
-        final double finalTotalPrice = totalPrice; // Make totalPrice final for the inner class
+        final double finalTotalPrice = totalPrice;
         final String finalOrderSummary = orderSummary.toString();
 
-        String url = "http://10.0.2.2/Soufra_Share/place_order.php"; // Replace with your actual URL
+        String url = "http://10.0.2.2/Soufra_Share/place_order.php";
         Log.d(TAG, "placeOrderForSeller: Sending order request to: " + url);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -252,12 +247,10 @@ public class CartActivity extends AppCompatActivity {
                             for (int i = 0; i < mealIdsToDecrease.size(); i++) {
                                 decreaseMealQuantity(mealIdsToDecrease.get(i), quantitiesToDecrease.get(i));
                             }
-                            // Remove the ordered items from the cart
                             cartItems.removeAll(items);
                             cartAdapter.notifyDataSetChanged();
                             updateTotalPrice();
                             checkEmptyCart();
-                            // Removed sendConfirmationEmail call
                         } else {
                             Toast.makeText(this, "Error placing order for seller " + sellerId + ": " + map.get("message"), Toast.LENGTH_LONG).show();
                         }
@@ -311,11 +304,11 @@ public class CartActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.e(TAG, "checkMealQuantity: Error parsing response", e);
                     } finally {
-                        callback.onQuantityChecked(isAvailable); // Execute the callback with the result
+                        callback.onQuantityChecked(isAvailable);
                     }
                 }, error -> {
             Log.e(TAG, "checkMealQuantity: Error checking quantity: " + error.getMessage());
-            callback.onQuantityChecked(false); // Execute the callback with false in case of error
+            callback.onQuantityChecked(false);
         });
         requestQueue.add(stringRequest);
         Log.d(TAG, "checkMealQuantity: Request added to queue");
@@ -346,9 +339,6 @@ public class CartActivity extends AppCompatActivity {
         });
         requestQueue.add(stringRequest);
     }
-
-    // Removed sendConfirmationEmail method
-
     private void fetchCartData(int userId) {
         String url = "http://10.0.2.2/Soufra_Share/get_cart.php?user_id=" + userId;
         Log.d(TAG, "fetchCartData: Fetching data from URL: " + url);
@@ -368,7 +358,7 @@ public class CartActivity extends AppCompatActivity {
                     Log.d(TAG, "fetchCartData: Cart data fetched and updated");
                 }, error -> {
             Log.e(TAG, "fetchCartData: Error fetching cart data: " + error.getMessage());
-            checkEmptyCart(); // Still check for empty state in case of error
+            checkEmptyCart();
         });
 
         requestQueue.add(stringRequest);

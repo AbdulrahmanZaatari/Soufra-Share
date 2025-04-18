@@ -186,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
 
     // --- Data Fetching ---
     private void fetchMeals() {
-        // Fetch all meals initially, applyFilters will handle the actual display logic
         String url = "http://10.0.2.2/Soufra_Share/meals.php?action=getAllWithUserDetails";
         Log.d("FetchMeals", "Fetching all meals from: " + url); // Log URL
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
@@ -199,10 +198,9 @@ public class MainActivity extends AppCompatActivity {
                             Meal meal = parseMeal(mealObject);
                             originalMealList.add(meal); // Add to the original list
                         }
-                        // Sort the originalMealList by created_at in descending order
                         java.util.Collections.sort(originalMealList);
 
-                        // Apply filters which will populate mealList and update adapter
+
                         applyFilters();
                         Log.d("FetchMeals", "Finished parsing and sorting meals. Original list size: " + originalMealList.size());
                     } catch (JSONException e) {
@@ -232,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < allTags.size(); i++) {
                             tagNames[i] = allTags.get(i).getName();
                         }
-                        // Initialize selectedTags based on the fetched count
                         selectedTags = new boolean[allTags.size()];
                         Log.d("FetchTags", "Finished parsing tags. Count: " + allTags.size());
                     } catch (JSONException e) {
@@ -257,17 +254,15 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setView(filterView);
 
-        // Pre-fill price fields based on currentPriceFilter
+
         parseAndSetPriceFilter(minPriceEditText, maxPriceEditText);
-        // Clone selectedTags for the dialog to avoid modifying the actual state until "Apply" is clicked
         boolean[] dialogSelectedTags = selectedTags.clone();
         builder.setMultiChoiceItems(tagNames, dialogSelectedTags, (dialog, which, isChecked) -> {
             dialogSelectedTags[which] = isChecked;
         });
 
         builder.setPositiveButton("Apply", (dialog, which) -> {
-            // Apply changes from the dialog to the actual state
-            selectedTags = dialogSelectedTags; // Update the main selectedTags array
+            selectedTags = dialogSelectedTags;
 
             StringBuilder selectedTagsString = new StringBuilder();
             for (int i = 0; i < selectedTags.length; i++) {
@@ -279,8 +274,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             currentTagFilter = selectedTagsString.toString();
-
-            // Read price fields and update currentPriceFilter
             String minPrice = minPriceEditText.getText().toString().trim();
             String maxPrice = maxPriceEditText.getText().toString().trim();
             updateCurrentPriceFilter(minPrice, maxPrice);
@@ -303,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void parseAndSetPriceFilter(EditText minPriceEditText, EditText maxPriceEditText) {
-        // Clear fields first
         minPriceEditText.setText("");
         maxPriceEditText.setText("");
 
@@ -369,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap<>();
         boolean hasFilter = false;
         String baseUrl = "http://10.0.2.2/Soufra_Share/meals.php";
-        String action = "getAllWithUserDetails"; // Default action
+        String action = "getAllWithUserDetails";
 
         if (!currentQuery.isEmpty() || !currentTagFilter.isEmpty() || !currentPriceFilter.isEmpty()) {
             action = "filter";
@@ -450,7 +442,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Meal parseMeal(JSONObject mealObject) throws JSONException {
-        // Use optString, optInt, optDouble to handle potential missing fields gracefully
         Meal meal = new Meal(
                 mealObject.optInt("meal_id"),
                 mealObject.optInt("user_id"),
@@ -466,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
                 mealObject.optString("profile_picture", ""),
                 mealObject.optDouble("rating", 0.0)
         );
-        meal.setCreatedAt(mealObject.optString("created_at", "")); // Ensure it's also set using the setter
+        meal.setCreatedAt(mealObject.optString("created_at", ""));
         return meal;
     }
 
