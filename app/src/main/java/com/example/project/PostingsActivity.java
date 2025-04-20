@@ -64,7 +64,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.postings_main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0); // Apply padding except bottom
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0); 
             return WindowInsetsCompat.CONSUMED;
         });
 
@@ -99,7 +99,6 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
     private void setupRecyclerView() {
         Log.d(TAG, "setupRecyclerView() called");
         postingsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Assuming PostingAdapter takes Context, List<Meal>, and OnPostingActionListener
         postingAdapter = new PostingAdapter(this, userPostingsList, this);
         postingsRecyclerView.setAdapter(postingAdapter);
     }
@@ -109,13 +108,12 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.navigation_postings) {
-                return true; // Already here
+                return true;
             } else if (id == R.id.navigation_orders) {
-                navigateTo(MainActivity.class); // Assuming MainActivity is your Orders page
+                navigateTo(MainActivity.class);
                 return true;
             } else if (id == R.id.navigation_dashboard) {
                 SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-                // Use the correct key: "user_id"
                 int userId = prefs.getInt("user_id", -1);
 
                 if (userId != -1) {
@@ -126,7 +124,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                     return true;
                 } else {
                     Toast.makeText(PostingsActivity.this, "User ID not found in preferences.", Toast.LENGTH_SHORT).show();
-                    return false; // Or handle this error as needed
+                    return false;
                 }
             }
             return false;
@@ -158,26 +156,22 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
 
     private void fetchUserPostings() {
         if (currentUserId == -1) return;
-
-        // Using the original getMealsByUser URL to fetch user's own meals
         String url = BASE_URL + "meals.php?user_id=" + currentUserId;
         Log.d(TAG, "Fetching user postings from: " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null,
                 response -> {
                     Log.d(TAG, "Received " + response.length() + " postings.");
-                    Log.d(TAG, "Raw JSON Response: " + response.toString()); // Log the raw JSON response
+                    Log.d(TAG, "Raw JSON Response: " + response.toString());
                     userPostingsList.clear();
                     try {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject mealObject = response.getJSONObject(i);
-                            Meal meal = parseMealFromJson(mealObject); // Use helper method
+                            Meal meal = parseMealFromJson(mealObject);
                             if (meal != null) {
                                 userPostingsList.add(meal);
                             }
                         }
-
-                        // Use the adapter's update method for clarity
                         postingAdapter.updatePostings(userPostingsList);
                         checkEmptyState();
                     } catch (JSONException e) {
@@ -197,26 +191,22 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
     private Meal parseMealFromJson(JSONObject mealObject) {
         if (mealObject == null) return null;
         try {
-            // Ensure all fields are being extracted, including quantity, username, profilePicture, rating
             return new Meal(
-                    mealObject.optInt("meal_id", -1), // Use default value -1 if ID is missing
-                    mealObject.optInt("user_id", -1), // Use default value -1 if ID is missing
+                    mealObject.optInt("meal_id", -1),
+                    mealObject.optInt("user_id", -1),
                     mealObject.optString("name", "N/A"),
                     mealObject.optDouble("price", 0.0),
                     mealObject.optInt("quantity", 0),
                     mealObject.optString("location", ""),
-                    mealObject.optInt("delivery_option", 0), // Default to 0 (Pickup Only) if missing
+                    mealObject.optInt("delivery_option", 0),
                     mealObject.optString("description", ""),
-                    mealObject.optString("image_paths", "[]"), // Default to empty JSON array string
+                    mealObject.optString("image_paths", "[]"),
                     mealObject.optString("created_at", ""),
-                    // These fields might not be in the getMealsByUser response,
-                    // but the Meal class constructor expects them. Provide defaults.
                     mealObject.optString("username", null),
                     mealObject.optString("profile_picture", null),
                     mealObject.optDouble("rating", 0.0)
             );
         } catch (Exception e) {
-            // Catch any exception during parsing and log the problematic object
             Log.e(TAG, "Error parsing single meal object: " + mealObject.toString(), e);
             return null; // Return null if parsing fails
         }
@@ -239,12 +229,11 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing JSON response", e);
                         Toast.makeText(this, "Deletion successful (response parsing issue).", Toast.LENGTH_SHORT).show();
-                        // Assume deletion was successful if JSON parsing fails after a 2xx response
                         postingAdapter.removeItem(position);
                         checkEmptyState();
                     }
                 },
-                this::handleVolleyError); // Use method reference for error handling
+                this::handleVolleyError);
 
         requestQueue.add(deleteRequest);
     }
@@ -263,14 +252,14 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
         Log.e(TAG, "User ID not found in SharedPreferences. Redirecting to login.");
         Toast.makeText(this, "Error: User session invalid. Please log in again.", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(this, SignIn.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish(); // Finish this activity
+        finish();
     }
 
     private void navigateTo(Class<?> activityClass) {
         Intent intent = new Intent(PostingsActivity.this, activityClass);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT); // Bring existing task to front
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
 
@@ -279,12 +268,10 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
         String message = "An error occurred.";
         if (error.networkResponse != null) {
             message += " Status Code: " + error.networkResponse.statusCode;
-            // You can also log or parse error.networkResponse.data if the server sends error details in the body
             if (error.networkResponse.data != null) {
                 try {
                     String errorData = new String(error.networkResponse.data);
                     Log.e(TAG, "Volley error data: " + errorData);
-                    // Attempt to parse as JSON if applicable
                     JSONObject errorJson = new JSONObject(errorData);
                     if (errorJson.has("message")) {
                         message += ": " + errorJson.getString("message");
@@ -303,9 +290,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
     public void onEditClick(Meal meal) {
         Log.d(TAG, "Edit clicked for meal: " + meal.getName() + " (ID: " + meal.getMealId() + ")");
         Intent intent = new Intent(PostingsActivity.this, EditMealActivity.class);
-        // Pass the whole Meal object (Meal class must be Serializable)
         intent.putExtra("EDIT_MEAL_DATA", meal);
-        // Use the launcher to start for result
         mealActivityResultLauncher.launch(intent);
     }
 
@@ -316,7 +301,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                 .setTitle("Delete Posting")
                 .setMessage("Are you sure you want to delete '" + meal.getName() + "'?")
                 .setPositiveButton("Delete", (dialog, which) -> deletePosting(meal, position))
-                .setNegativeButton("Cancel", null) // No action for cancel
+                .setNegativeButton("Cancel", null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }

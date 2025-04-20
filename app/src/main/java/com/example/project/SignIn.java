@@ -62,8 +62,6 @@ public class SignIn extends AppCompatActivity {
                     Toast.makeText(SignIn.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                // Create JSON object for the request body
                 JSONObject requestBody = new JSONObject();
                 try {
                     requestBody.put("email", email);
@@ -74,8 +72,6 @@ public class SignIn extends AppCompatActivity {
                     Toast.makeText(SignIn.this, "Error creating request", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                // Create Volley request
                 JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_SIGNIN, requestBody,
                         new Response.Listener<JSONObject>() {
                             @Override
@@ -96,14 +92,9 @@ public class SignIn extends AppCompatActivity {
                                         if (!response.has("user_id")) {
                                             Log.e("SignInResponse", "Response missing 'user_id' key on success");
                                             Toast.makeText(SignIn.this, "Login successful, but user ID missing.", Toast.LENGTH_LONG).show();
-                                            // Decide how to handle this - maybe still proceed? Or treat as failure?
-                                            // For now, we'll prevent proceeding without user_id
                                             return;
                                         }
                                         int userId = response.getInt("user_id");
-                                        // -----------------------------------
-
-
                                         Log.i("SignIn", "Sign-in successful for user ID: " + userId);
                                         Toast.makeText(SignIn.this, message, Toast.LENGTH_SHORT).show(); // Show success message
                                         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -116,9 +107,8 @@ public class SignIn extends AppCompatActivity {
                                         Intent intent = new Intent(SignIn.this, MainActivity.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startActivity(intent);
-                                        finish(); // Finish SignIn activity
+                                        finish();
                                     } else {
-                                        // Sign-in failed, show the error message from the server
                                         Log.w("SignIn", "Sign-in failed: " + message);
                                         Toast.makeText(SignIn.this, message, Toast.LENGTH_LONG).show();
                                     }
@@ -144,13 +134,9 @@ public class SignIn extends AppCompatActivity {
                                 Toast.makeText(SignIn.this, errorMessage, Toast.LENGTH_LONG).show();
                             }
                         });
-
-                // Add the request to the RequestQueue
                 requestQueue.add(request);
             }
         });
-
-        // Sign Up Redirect Button Logic
         btnSignUpRedirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

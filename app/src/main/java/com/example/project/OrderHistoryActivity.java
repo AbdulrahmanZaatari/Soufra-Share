@@ -43,8 +43,6 @@ public class OrderHistoryActivity extends AppCompatActivity {
     private OrderHistoryAdapter adapter;
     private List<Order> orderList;
     private ProgressBar progressBar;
-
-    // Replace with your actual API endpoint
     private static final String URL_ORDERS = "http://10.0.2.2/Soufra_Share/get_order_history.php";
 
     private static final String PREF_NAME = "MyAppPrefs";

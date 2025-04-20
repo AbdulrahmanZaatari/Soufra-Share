@@ -1,6 +1,7 @@
 package com.example.project;
 
 import android.content.Intent;
+import android.content.SharedPreferences; // Import SharedPreferences
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +25,7 @@ import java.util.List;
 public class MealDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "MealDetailActivity";
+    private static final String PREF_NAME = "MyAppPrefs"; // Added Preference Name
     private ImageView mealImageView;
     private TextView mealNameTextView;
     private TextView mealDescriptionTextView;
@@ -32,20 +34,35 @@ public class MealDetailActivity extends AppCompatActivity {
     private TextView mealDeliveryOptionTextView;
     private EditText quantityEditText;
     private Button addToCartButton;
-    private Button goBackButton; // Added Go Back Button
-    private Button cartButton; // Added Cart Button
+    private Button goBackButton;
+    private Button cartButton;
     private Meal currentMeal;
     private RequestQueue requestQueue;
-    private String baseUrl = "http://10.0.2.2/Soufra_Share/"; // Define your base URL here
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/";
 
-    // Replace with the actual logged-in user ID
-    private int loggedInUserId = 1; // Placeholder for user ID
+    private int loggedInUserId; // Removed initialization = 1
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_detail);
         Log.d(TAG, "onCreate() called");
+
+        // Retrieve User ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        loggedInUserId = prefs.getInt("user_id", -1); // Get the stored user ID
+
+        if (loggedInUserId == -1) {
+            Log.e(TAG, "User ID not found in SharedPreferences. Cannot add to cart.");
+            Toast.makeText(this, "Error: You seem to be logged out. Please sign in again.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, SignIn.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish(); // Close this activity
+            return; // Stop further execution in onCreate
+        }
+        Log.i(TAG, "onCreate: Successfully retrieved User ID: " + loggedInUserId);
+
 
         // Initialize views
         mealImageView = findViewById(R.id.meal_image_view);
@@ -100,14 +117,14 @@ public class MealDetailActivity extends AppCompatActivity {
 
                 } catch (Exception e) {
                     Log.e(TAG, "Error parsing image paths: " + e.getMessage());
-                    mealImageView.setImageResource(R.drawable.sushi); // Placeholder on error
+                    mealImageView.setImageResource(R.drawable.sushi);
                 }
             } else {
-                mealImageView.setImageResource(R.drawable.sushi); // Placeholder if no image paths
+                mealImageView.setImageResource(R.drawable.sushi);
             }
             Log.d(TAG, "Meal image loading initiated");
 
-            // Set click listener for the add to cart button
+
             addToCartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -134,18 +151,16 @@ public class MealDetailActivity extends AppCompatActivity {
             });
             Log.d(TAG, "addToCartButton OnClickListener set");
         } else {
-            // Handle the case where no meal was passed
             Log.e(TAG, "Error: Could not load meal details - Meal object is null");
             Toast.makeText(this, "Error: Could not load meal details", Toast.LENGTH_SHORT).show();
-            finish(); // Go back to the previous activity
+            finish();
         }
 
-        // Set click listener for the Go Back button
         goBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "goBackButton clicked");
-                Intent intent = new Intent(MealDetailActivity.this, MainActivity.class); // Assuming MainActivity is your orders page
+                Intent intent = new Intent(MealDetailActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -156,7 +171,7 @@ public class MealDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "cartButton clicked");
-                Intent intent = new Intent(MealDetailActivity.this, CartActivity.class); // Assuming CartActivity is your cart page
+                Intent intent = new Intent(MealDetailActivity.this, CartActivity.class);
                 startActivity(intent);
             }
         });
@@ -165,14 +180,14 @@ public class MealDetailActivity extends AppCompatActivity {
 
     private void addToCart(int mealId, int quantity) {
         Log.d(TAG, "addToCart() called with mealId: " + mealId + ", quantity: " + quantity);
-        String url = baseUrl + "cart.php";
+        String url = baseUrl + "cart.php"; // Assuming cart.php handles adding items
         Log.d(TAG, "AddToCart URL: " + url);
         com.android.volley.toolbox.StringRequest request = new com.android.volley.toolbox.StringRequest(com.android.volley.Request.Method.POST, url,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         String TAG_RESPONSE = "AddToCartResponse";
-                        Log.d(TAG_RESPONSE, "Raw Server Response Length: " + response.length()); // Log the length
+                        Log.d(TAG_RESPONSE, "Raw Server Response Length: " + response.length());
                         if (response.length() > 4000) {
                             int chunkCount = response.length() / 4000;
                             for (int i = 0; i <= chunkCount; i++) {

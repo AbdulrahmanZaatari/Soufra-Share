@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,7 @@ import javax.mail.internet.MimeMessage;
 public class CartActivity extends AppCompatActivity {
 
     private static final String TAG = "CartActivity";
+    private static final String PREF_NAME = "MyAppPrefs"; // Added Preference Name
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
     private List<CartItem> cartItems = new ArrayList<>();
@@ -42,8 +44,8 @@ public class CartActivity extends AppCompatActivity {
     private TextView emptyCartTextView;
     private Button orderNowButton;
     private Button backButton;
-    private int userId = 1;
-    private String userEmail = "user@example.com";
+    private int userId; // Removed initialization = 1
+    private String userEmail = "user@example.com"; // Kept this as it wasn't part of the core issue
 
     public interface QuantityCheckCallback {
         void onQuantityChecked(boolean isAvailable);
@@ -55,6 +57,22 @@ public class CartActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting onCreate");
         setContentView(R.layout.activity_cart);
         Log.d(TAG, "onCreate: setContentView finished");
+
+        // Retrieve User ID from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        userId = prefs.getInt("user_id", -1); // Get the stored user ID, default to -1 if not found
+
+        if (userId == -1) {
+            Log.e(TAG, "User ID not found in SharedPreferences. Cannot proceed with cart.");
+            Toast.makeText(this, "Error: You seem to be logged out. Please sign in again.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, SignIn.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish(); // Close CartActivity as it's unusable without a user ID
+            return; // Stop further execution in onCreate
+        }
+        Log.i(TAG, "onCreate: Successfully retrieved User ID: " + userId);
+
 
         backButton = findViewById(R.id.back_button);
         Log.d(TAG, "onCreate: backButton found: " + (backButton != null));
@@ -98,8 +116,8 @@ public class CartActivity extends AppCompatActivity {
         });
         Log.d(TAG, "onCreate: Back button click listener set");
 
-        fetchCartData(userId);
-        Log.d(TAG, "onCreate: fetchCartData called");
+        fetchCartData(userId); // Now uses the retrieved userId
+        Log.d(TAG, "onCreate: fetchCartData called with user ID: " + userId);
     }
 
     private void showConfirmationDialog() {
@@ -265,7 +283,7 @@ public class CartActivity extends AppCompatActivity {
             @Override
             protected java.util.Map<String, String> getParams() {
                 java.util.Map<String, String> params = new java.util.HashMap<>();
-                params.put("buyer_id", String.valueOf(userId));
+                params.put("buyer_id", String.valueOf(userId)); // Now uses the correct retrieved userId
                 params.put("seller_id", String.valueOf(sellerId));
                 params.put("total_price", String.valueOf(finalTotalPrice));
                 params.put("order_items", orderItemsJson); // Send the list of order items as JSON
@@ -276,6 +294,7 @@ public class CartActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
         Log.d(TAG, "placeOrderForSeller: Request added to queue for seller ID: " + sellerId);
     }
+
 
     private void checkMealQuantity(int mealId, int quantity, QuantityCheckCallback callback) {
         String url = "http://10.0.2.2/Soufra_Share/check_meal_quantity.php?meal_id=" + mealId + "&quantity=" + quantity;
