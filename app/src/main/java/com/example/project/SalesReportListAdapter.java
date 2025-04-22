@@ -2,8 +2,10 @@ package com.example.project;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ public class SalesReportListAdapter extends RecyclerView.Adapter<SalesReportList
     private Context context;
     private List<SalesRecord> salesRecordList;
     private String baseUrl = "http://10.0.2.2/Soufra_Share/";
+    private static final String PREF_NAME = "MyAppPrefs";
 
     public SalesReportListAdapter(Context context, List<SalesRecord> salesRecordList) {
         this.context = context;
@@ -31,7 +34,7 @@ public class SalesReportListAdapter extends RecyclerView.Adapter<SalesReportList
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_sales_report, parent, false); // Create this layout
+                .inflate(R.layout.item_sales_report, parent, false);
         return new ViewHolder(view);
     }
 
@@ -43,10 +46,22 @@ public class SalesReportListAdapter extends RecyclerView.Adapter<SalesReportList
 
         holder.buttonDownloadReport.setOnClickListener(v -> {
             String saleDate = salesRecord.getSaleDate();
-            String downloadUrl = baseUrl + "generate_sales_report.php?date=" + saleDate;
+            int userId = getUserId();
+
+            if (userId == -1) {
+                Toast.makeText(context, "User ID not found. Please log in again.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String downloadUrl = baseUrl + "generate_sales_report.php?date=" + saleDate + "&user_id=" + userId;
             String filename = "sales_report_" + saleDate + ".pdf";
             downloadPdf(downloadUrl, filename);
         });
+    }
+
+    private int getUserId() {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt("user_id", -1);
     }
 
     private void downloadPdf(String downloadUrl, String filename) {
