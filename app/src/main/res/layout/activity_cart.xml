@@ -15,7 +15,7 @@
         android:backgroundTint="@color/brown"
         android:textStyle="bold"
         android:fontFamily="casual"
-        android:text="Back"
+        android:text="@string/back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -24,7 +24,7 @@
         android:id="@+id/cart_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Cart"
+        android:text="@string/your_cart"
         android:textSize="24sp"
         android:fontFamily="cursive"
         android:background="@drawable/textview_border"
@@ -67,7 +67,7 @@
             android:layout_weight="1"
             android:padding="10dp"
             android:background="@drawable/textview_border"
-            android:text="Total:"
+            android:text="@string/total"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -95,7 +95,7 @@
         android:fontFamily="casual"
         android:textSize="20dp"
         android:backgroundTint="@color/orangeLighter"
-        android:text="Order Now"
+        android:text="@string/order_now"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -108,7 +108,7 @@
         android:background="@drawable/textview_border"
         android:fontFamily="cursive"
         android:padding="10dp"
-        android:text="Your Cart is Empty"
+        android:text="@string/your_cart_is_empty"
         android:textSize="25sp"
 
         android:textStyle="bold"

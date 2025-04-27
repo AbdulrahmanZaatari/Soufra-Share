@@ -16,7 +16,7 @@
         android:orientation="horizontal"
       >
 
-        <!-- Right Section: Username, Rating, Comment, Date -->
+
         <androidx.cardview.widget.CardView
             android:layout_width="85dp"
             android:layout_height="match_parent">

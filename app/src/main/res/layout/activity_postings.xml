@@ -27,7 +27,7 @@
         android:id="@+id/text_view_empty_postings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You haven't posted any meals yet."
+        android:text="@string/no_post"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@+id/postings_recycler_view"
         app:layout_constraintBottom_toBottomOf="@+id/postings_recycler_view"
@@ -42,7 +42,7 @@
         android:backgroundTint="@color/brown"
         app:srcCompat="@drawable/plus"
         android:layout_margin="16dp"
-        android:contentDescription="+"
+        android:contentDescription="@string/plus"
         app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_postings"
         app:layout_constraintEnd_toEndOf="parent" />
 

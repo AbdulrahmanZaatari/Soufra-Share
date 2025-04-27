@@ -34,7 +34,7 @@
                 android:fontFamily="cursive"
 
 
-                android:text="Order ID: 123"
+                android:text="@string/order_id"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -46,7 +46,7 @@
                 android:layout_marginTop="8dp"
                 android:fontFamily="casual"
 
-                android:text="Date: 2023-10-27"
+                android:text="@string/dateex"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="casual"
-                android:text="Total: $50.00"
+                android:text="@string/priceex"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -73,7 +73,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/brown"
                     android:fontFamily="casual"
-                    android:text="Download"
+                    android:text="@string/download"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
@@ -85,7 +85,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/brown"
                     android:fontFamily="casual"
-                    android:text="View"
+                    android:text="@string/view"
                     android:textSize="17sp"
                     android:textStyle="bold" />
 

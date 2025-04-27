@@ -53,7 +53,7 @@
                         android:layout_height="36dp"
                         android:layout_marginTop="148dp"
                         android:backgroundTint="@color/brown"
-                        android:text="Edit Picture"
+                        android:text="@string/edit_picture"
 
                         android:visibility="gone" />
 
@@ -78,7 +78,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:fontFamily="casual"
-                            android:text="Username:"
+                            android:text="@string/u1"
 
                             android:textColor="@color/black"
                             android:textStyle="bold" />
@@ -101,7 +101,7 @@
                             android:paddingBottom="5dp"
                             android:ems="10"
                             android:inputType="textPersonName"
-                            android:hint="Enter your userName please"
+                            android:hint="@string/enteruname"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -118,7 +118,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:fontFamily="casual"
-                            android:text="Full Name:"
+                            android:text="@string/full_name"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
 
@@ -156,7 +156,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:fontFamily="casual"
-                            android:text="Email:"
+                            android:text="@string/email"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
 
@@ -195,7 +195,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:fontFamily="casual"
-                            android:text="Phone:"
+                            android:text="@string/phnb"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
 
@@ -275,7 +275,7 @@
                 android:background="@drawable/textview_border"
                 android:fontFamily="casual"
                 android:gravity="center"
-                android:text="About"
+                android:text="@string/about"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -341,7 +341,7 @@
 
                 android:paddingBottom="5dp"
 
-                android:text="Your Rating"
+                android:text="@string/your_rating"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -366,7 +366,7 @@
         android:background="@drawable/textview_border"
         android:fontFamily="casual"
         android:gravity="center"
-        android:text="Reviews"
+        android:text="@string/reviews"
         android:textColor="@color/black"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -410,7 +410,7 @@
             android:backgroundTint="@color/brown"
             android:fontFamily="casual"
 
-            android:text="Edit Details"
+            android:text="@string/edit_details"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -422,7 +422,7 @@
             android:backgroundTint="@color/brown"
             android:fontFamily="casual"
 
-            android:text="Save Details"
+            android:text="@string/save_details"
             android:textSize="15sp"
             android:textStyle="bold"
             android:visibility="gone" />
@@ -435,7 +435,7 @@
             android:layout_marginStart="20dp"
             android:backgroundTint="@color/brown"
             android:fontFamily="casual"
-            android:text="Order History"
+            android:text="@string/order_history2"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -447,7 +447,7 @@
 
             android:backgroundTint="@color/brown"
             android:fontFamily="casual"
-            android:text="Sales Reports"
+            android:text="@string/sales_reports2"
             android:textSize="15sp"
             android:textStyle="bold" />
     </LinearLayout>

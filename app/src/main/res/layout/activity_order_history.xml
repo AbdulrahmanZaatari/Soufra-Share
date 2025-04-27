@@ -18,7 +18,7 @@
         android:gravity="center"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"
-        android:text="Order History"
+        android:text="@string/order_history"
         android:textSize="30sp"
         android:textStyle="bold" />
 

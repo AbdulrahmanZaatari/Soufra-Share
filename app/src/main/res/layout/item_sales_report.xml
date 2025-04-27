@@ -34,7 +34,7 @@
                 android:layout_marginLeft="80dp"
                 android:fontFamily="casual"
                 android:padding="3dp"
-                android:text="Date: 2025-04-13"
+                android:text="@string/date_2025_04_13"
 
 
                 android:textColor="@color/black"
@@ -48,7 +48,7 @@
                 android:layout_marginLeft="75dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="casual"
-                android:text="Total Sales: $370.00"
+                android:text="@string/total_sales_370_00"
                 android:textColor="@color/black"
                 android:textSize="16sp"
 
@@ -63,7 +63,7 @@
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/brown"
                 android:fontFamily="casual"
-                android:text="Download PDF"
+                android:text="@string/download_pdf"
                 android:textSize="17sp"
                 android:layout_marginBottom="20dp"
 

@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@color/white"
-            android:hint="Meal Name"
+            android:hint="@string/meal_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/label_edit_meal_title">
@@ -67,7 +67,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/white"
 
-            android:hint="Price ($)"
+            android:hint="@string/price"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_layout_edit_name">
@@ -87,7 +87,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/white"
 
-            android:hint="Quantity Available"
+            android:hint="@string/quantity_available"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_layout_edit_price">
@@ -107,7 +107,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/white"
 
-            android:hint="Description"
+            android:hint="@string/description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_layout_edit_quantity">
@@ -129,7 +129,7 @@
             android:layout_marginTop="8dp"
             android:background="@color/white"
 
-            android:hint="Pickup Location"
+            android:hint="@string/pickup_location"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/input_layout_edit_description">

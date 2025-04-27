@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:layout_marginTop="4dp"
-                android:text="About this user..." />
+                android:text="@string/about_this_user" />
         </LinearLayout>
 
         <TextView
@@ -105,7 +105,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="24dp"
-            android:text="Meals Posted by This User:" />
+            android:text="@string/meals_posted_by_this_user" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mealsRecyclerView"
@@ -119,7 +119,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="24dp"
-            android:text="Reviews:" />
+            android:text="@string/reviews" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reviewsRecyclerView"
@@ -133,7 +133,7 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginTop="24dp"
-            android:text="Leave a Review:" />
+            android:text="@string/leave_a_review" />
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -148,7 +148,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="Your comment..."
+            android:hint="@string/your_comment"
             android:inputType="textMultiLine" />
 
         <Button
@@ -156,7 +156,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Submit Review" />
+            android:text="@string/submit_review" />
 
     </LinearLayout>
 
