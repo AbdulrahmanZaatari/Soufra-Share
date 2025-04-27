@@ -286,7 +286,7 @@ public class SignUp extends AppCompatActivity {
                             String message = response.getString("message");
                             Toast.makeText(SignUp.this, message, Toast.LENGTH_LONG).show();
                             Log.d(TAG, "Signup successful. Response message: " + message);
-                            startActivity(new Intent(SignUp.this, MainActivity.class)); // Replace with your login activity
+                            startActivity(new Intent(SignUp.this, SignIn.class)); // Replace with your login activity
                             finish();
                         } catch (JSONException e) {
                             e.printStackTrace();

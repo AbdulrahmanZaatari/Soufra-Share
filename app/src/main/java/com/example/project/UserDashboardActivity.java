@@ -159,16 +159,21 @@ public class UserDashboardActivity extends AppCompatActivity {
                 Intent intent = new Intent(UserDashboardActivity.this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                finish();
                 return true;
-            } else if (id == R.id.navigation_postings) {
+            }
+            else if (id == R.id.navigation_postings) {
                 selectedProfilePictureBitmap = null;
                 Intent intent = new Intent(UserDashboardActivity.this, PostingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
-                return true;
-            } else if (id == R.id.navigation_dashboard) {
+                finish();
                 return true;
             }
+            else if (id == R.id.navigation_dashboard) {
+                return true;
+            }
+
             return false;
         });
     }

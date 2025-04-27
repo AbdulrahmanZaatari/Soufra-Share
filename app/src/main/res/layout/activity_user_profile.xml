@@ -205,9 +205,9 @@
 
         <RatingBar
             android:id="@+id/ratingBar"
-            android:layout_width="303dp"
-            android:layout_height="59dp"
-            android:layout_marginStart="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="53dp"
+            android:layout_marginStart="65dp"
             android:layout_marginTop="8dp"
             android:background="@color/transparentWhite"
             android:numStars="5"

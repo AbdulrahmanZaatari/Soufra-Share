@@ -111,6 +111,8 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                 return true;
             } else if (id == R.id.navigation_orders) {
                 navigateTo(MainActivity.class);
+                finish();
+
                 return true;
             } else if (id == R.id.navigation_dashboard) {
                 SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -121,6 +123,8 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                     intent.putExtra("USER_ID", userId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
+                    finish();
+
                     return true;
                 } else {
                     Toast.makeText(PostingsActivity.this, "User ID not found in preferences.", Toast.LENGTH_SHORT).show();
