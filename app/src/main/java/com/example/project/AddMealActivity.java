@@ -66,11 +66,10 @@ public class AddMealActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_meal);
         requestQueue = Volley.newRequestQueue(this);
 
-        // --- Get User ID from Intent ---
         currentUserId = getIntent().getIntExtra("USER_ID", -1);
         if (currentUserId == -1) {
             handleDataError("Error: Could not identify user. Please log in again.");
-            return; // Exit if user ID is missing
+            return;
         }
         Log.d(TAG, "User ID for posting: " + currentUserId);
 
@@ -85,7 +84,6 @@ public class AddMealActivity extends AppCompatActivity {
 
     private void checkStoragePermissionAndOpenGallery() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            // Android 13 and above
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
@@ -155,12 +153,12 @@ public class AddMealActivity extends AppCompatActivity {
         addImageMeal = findViewById(R.id.add_image_meal);
         progressBar = findViewById(R.id.progressBar);
 
-        // Setup Spinner
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, DELIVERY_OPTIONS);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerDeliveryOption.setAdapter(adapter);
-        spinnerDeliveryOption.setSelection(0); // Default selection
+        spinnerDeliveryOption.setSelection(0);
     }
 
     private void setupPostButton() {
@@ -239,7 +237,6 @@ public class AddMealActivity extends AppCompatActivity {
             handleVolleyError(error);
         });
 
-        // Add string parameters
         multipartRequest.addStringParam("user_id", String.valueOf(currentUserId));
         multipartRequest.addStringParam("name", name);
         multipartRequest.addStringParam("price", String.valueOf(price));
@@ -248,16 +245,15 @@ public class AddMealActivity extends AppCompatActivity {
         multipartRequest.addStringParam("delivery_option", String.valueOf(deliveryOptionValue));
         multipartRequest.addStringParam("description", description);
 
-        // Add file parameter
         if (selectedImageUri != null) {
             try {
                 InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
                 byte[] imageData = getBytes(inputStream);
                 String mimeType = getContentResolver().getType(selectedImageUri);
 
-                String filename = "meal_image_" + System.currentTimeMillis() + ".png"; // Force .png extension
+                String filename = "meal_image_" + System.currentTimeMillis() + ".png";
                 Log.d(TAG, "Selected Image Filename (Forced): " + filename);
-                multipartRequest.addFile("meal_image", filename, imageData, mimeType); // Pass the filename here
+                multipartRequest.addFile("meal_image", filename, imageData, mimeType);
             } catch (IOException e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Error reading image file.", Toast.LENGTH_SHORT).show();
