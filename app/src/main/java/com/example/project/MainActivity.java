@@ -163,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, PostingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                finish();
+
                 return true;
             } else if (id == R.id.navigation_dashboard) {
                 SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -174,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("USER_ID", userId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
+                    finish();
+
                     return true;
                 } else {
                     Toast.makeText(MainActivity.this, "User ID not found in preferences.", Toast.LENGTH_SHORT).show();
