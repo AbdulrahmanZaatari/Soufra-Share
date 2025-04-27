@@ -1,13 +1,13 @@
 package com.example.project;
 
-import java.io.Serializable; // Import Serializable
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import android.util.Log;
 
-// Implement Serializable and Comparable
+
 public class Meal implements Serializable, Comparable<Meal> {
     private static final long serialVersionUID = 1L;
     private int mealId;

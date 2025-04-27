@@ -53,9 +53,8 @@ public class AddMealActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private Uri selectedImageUri;
 
-    private int currentUserId = -1; // To associate the meal with the logged-in user
+    private int currentUserId = -1;
 
-    // Define delivery options (match EditMealActivity and your DB/logic)
     private static final String[] DELIVERY_OPTIONS = {"Pickup Only", "Delivery Available", "Both"};
     private static final int DELIVERY_PICKUP = 0;
     private static final int DELIVERY_AVAILABLE = 1;
@@ -74,7 +73,6 @@ public class AddMealActivity extends AppCompatActivity {
             return; // Exit if user ID is missing
         }
         Log.d(TAG, "User ID for posting: " + currentUserId);
-        // ------------------------------
 
         initializeViews();
         setupPostButton();
@@ -136,7 +134,6 @@ public class AddMealActivity extends AppCompatActivity {
         }
     }
 
-    // Handle Up navigation from Toolbar
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -171,7 +168,6 @@ public class AddMealActivity extends AppCompatActivity {
     }
 
     private void attemptPostMeal() {
-        // --- Input Validation ---
         String name = Objects.requireNonNull(etName.getText()).toString().trim();
         String priceStr = Objects.requireNonNull(etPrice.getText()).toString().trim();
         String quantityStr = Objects.requireNonNull(etQuantity.getText()).toString().trim();
@@ -212,7 +208,7 @@ public class AddMealActivity extends AppCompatActivity {
         }
         try {
             quantity = Integer.parseInt(quantityStr);
-            if (quantity <= 0) throw new NumberFormatException(); // Quantity should be > 0
+            if (quantity <= 0) throw new NumberFormatException();
         } catch (NumberFormatException e) {
             showError(etQuantity, "Invalid quantity (must be > 0)");
             return;
@@ -288,7 +284,6 @@ public class AddMealActivity extends AppCompatActivity {
                 try {
                     inputStream.close();
                 } catch (IOException ignored) {
-                    // Ignored
                 }
             }
         }

@@ -3,7 +3,7 @@ package com.example.project;
 public class Order {
     private int orderId;
     private String orderDate;
-    private double totalAmount;  // This represents total_price
+    private double totalAmount;
 
     public Order(int orderId, String orderDate, double totalAmount) {
         this.orderId = orderId;

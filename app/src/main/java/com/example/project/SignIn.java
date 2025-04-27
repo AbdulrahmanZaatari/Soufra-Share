@@ -76,9 +76,8 @@ public class SignIn extends AppCompatActivity {
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                Log.d("SignInResponse", "Response: " + response.toString()); // Log successful response
+                                Log.d("SignInResponse", "Response: " + response.toString());
                                 try {
-                                    // Check if the response contains the "success" key
                                     if (!response.has("success")) {
                                         Log.e("SignInResponse", "Response missing 'success' key");
                                         Toast.makeText(SignIn.this, "Invalid response from server", Toast.LENGTH_LONG).show();
@@ -86,7 +85,7 @@ public class SignIn extends AppCompatActivity {
                                     }
 
                                     boolean success = response.getBoolean("success");
-                                    String message = response.optString("message", "Unknown status"); // Use optString for safety
+                                    String message = response.optString("message", "Unknown status");
 
                                     if (success) {
                                         if (!response.has("user_id")) {
@@ -96,11 +95,11 @@ public class SignIn extends AppCompatActivity {
                                         }
                                         int userId = response.getInt("user_id");
                                         Log.i("SignIn", "Sign-in successful for user ID: " + userId);
-                                        Toast.makeText(SignIn.this, message, Toast.LENGTH_SHORT).show(); // Show success message
+                                        Toast.makeText(SignIn.this, message, Toast.LENGTH_SHORT).show();
                                         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
                                         SharedPreferences.Editor editor = prefs.edit();
-                                        long loginTime = System.currentTimeMillis(); // Get current time in milliseconds
-                                        editor.putLong(KEY_LOGIN_TIMESTAMP, loginTime); // Save the timestamp
+                                        long loginTime = System.currentTimeMillis();
+                                        editor.putLong(KEY_LOGIN_TIMESTAMP, loginTime);
                                         editor.putInt("user_id", userId);
                                         editor.apply();
                                         Log.d("SignIn", "Saved login timestamp: " + loginTime + ", User ID: " + userId);

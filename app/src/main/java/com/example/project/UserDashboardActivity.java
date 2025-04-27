@@ -48,7 +48,6 @@ import java.util.Map;
 public class UserDashboardActivity extends AppCompatActivity {
 
     private int userId;
-    // Add TextView and EditText for 'about'
     private TextView usernameTextView, fullNameTextView, emailTextView, phoneTextView, locationTextView, aboutTextView;
     private EditText editUsernameEditText, editFullNameEditText, editEmailEditText, editPhoneEditText, editLocationEditText, editAboutEditText;
 
@@ -103,7 +102,7 @@ public class UserDashboardActivity extends AppCompatActivity {
         loadUserReviews();
 
         editDetailsButton.setOnClickListener(v -> enableEditMode());
-        saveDetailsButton.setOnClickListener(v -> saveUserDetails()); // This triggers the save process
+        saveDetailsButton.setOnClickListener(v -> saveUserDetails());
         editProfilePictureButton.setOnClickListener(v -> openImagePicker());
         salesReportsButton.setOnClickListener(v -> Toast.makeText(UserDashboardActivity.this, "Sales Reports will be implemented later", Toast.LENGTH_SHORT).show());
 
@@ -139,10 +138,10 @@ public class UserDashboardActivity extends AppCompatActivity {
         editEmailEditText = findViewById(R.id.edit_text_email);
         editPhoneEditText = findViewById(R.id.edit_text_phone);
         editLocationEditText = findViewById(R.id.edit_text_location);
-        editAboutEditText = findViewById(R.id.edit_text_about); // Initialize About EditText
+        editAboutEditText = findViewById(R.id.edit_text_about);
 
         setEditMode(false);
-        editEmailEditText.setEnabled(false); // Ensure email is always disabled for editing
+        editEmailEditText.setEnabled(false);
 
         reviewsRecyclerView = findViewById(R.id.recycler_view_reviews);
         reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -194,13 +193,13 @@ public class UserDashboardActivity extends AppCompatActivity {
                             ratingBar.setRating(0.0f);
                         }
 
-                        // Load profile picture using Picasso
+
                         String profilePicturePath = response.optString("profile_picture");
                         if (profilePicturePath != null && !profilePicturePath.isEmpty() && !profilePicturePath.equals("null")) { // Also check for string "null" if PHP sends it like that
                             String fullImageUrl = "http://10.0.2.2/Soufra_Share/" + profilePicturePath;
                             Picasso.get()
                                     .load(fullImageUrl)
-                                    .placeholder(R.drawable.ic_person) // Placeholder while loading
+                                    .placeholder(R.drawable.ic_person)
                                     .error(R.drawable.ic_person)
                                     .into(profilePictureImageView);
                             Log.d("UserDashboard", "Attempting to load PFP from URL: " + fullImageUrl);
@@ -299,14 +298,14 @@ public class UserDashboardActivity extends AppCompatActivity {
         emailTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
         phoneTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
         locationTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
-        aboutTextView.setVisibility(enable ? View.GONE : View.VISIBLE); // Toggle About TextView
+        aboutTextView.setVisibility(enable ? View.GONE : View.VISIBLE);
 
         editUsernameEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editFullNameEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editEmailEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editPhoneEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
         editLocationEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
-        editAboutEditText.setVisibility(enable ? View.VISIBLE : View.GONE); // Toggle About EditText
+        editAboutEditText.setVisibility(enable ? View.VISIBLE : View.GONE);
 
         editDetailsButton.setVisibility(enable ? View.GONE : View.VISIBLE);
         saveDetailsButton.setVisibility(enable ? View.VISIBLE : View.GONE);
@@ -325,7 +324,7 @@ public class UserDashboardActivity extends AppCompatActivity {
         String newEmail = emailTextView.getText().toString();
         String newPhone = editPhoneEditText.getText().toString().trim();
         String newLocation = editLocationEditText.getText().toString().trim();
-        String newAbout = editAboutEditText.getText().toString().trim(); // Get text from About EditText
+        String newAbout = editAboutEditText.getText().toString().trim();
 
 
         String url = "http://10.0.2.2/Soufra_Share/users.php?action=updateUserDetails";
@@ -338,10 +337,10 @@ public class UserDashboardActivity extends AppCompatActivity {
             requestBody.put("email", newEmail);
             requestBody.put("phone_num", newPhone);
             requestBody.put("location", newLocation);
-            requestBody.put("about", newAbout); // Include 'about' in the JSON body
+            requestBody.put("about", newAbout);
 
         } catch (JSONException e) {
-            e.printStackTrace(); // Keep stack trace log for debugging
+            e.printStackTrace();
             Toast.makeText(UserDashboardActivity.this, "Error creating JSON request for text update", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -354,10 +353,10 @@ public class UserDashboardActivity extends AppCompatActivity {
                         if (response.optBoolean("success", true)) {
                             Toast.makeText(UserDashboardActivity.this, "Text details updated successfully", Toast.LENGTH_SHORT).show();
                             if (selectedProfilePictureBitmap != null) {
-                                Log.d("UserDashboard", "Text update successful, proceeding to upload PFP."); // Keep useful logs
+                                Log.d("UserDashboard", "Text update successful, proceeding to upload PFP.");
                                 uploadProfilePicture();
                             } else {
-                                Log.d("UserDashboard", "Text update successful, no new PFP selected."); // Keep useful logs
+                                Log.d("UserDashboard", "Text update successful, no new PFP selected.");
                                 Toast.makeText(UserDashboardActivity.this, "Details updated successfully", Toast.LENGTH_SHORT).show();
                                 loadUserDetails();
                                 disableEditMode();
@@ -372,7 +371,7 @@ public class UserDashboardActivity extends AppCompatActivity {
                     }
                 },
                 error -> {
-                    Log.e("UserDashboard", "Error updating text details: " + error.toString()); // Keep error logs
+                    Log.e("UserDashboard", "Error updating text details: " + error.toString());
                     String errorMessage = "Error updating text details";
                     if (error.networkResponse != null) {
                         errorMessage += ": Status Code " + error.networkResponse.statusCode;
@@ -395,7 +394,7 @@ public class UserDashboardActivity extends AppCompatActivity {
 
     private void uploadProfilePicture() {
         if (selectedProfilePictureBitmap == null) {
-            Log.d("UserDashboard", "No new profile picture selected for upload."); // Keep useful logs
+            Log.d("UserDashboard", "No new profile picture selected for upload.");
             Toast.makeText(UserDashboardActivity.this, "No new picture selected.", Toast.LENGTH_SHORT).show();
             loadUserDetails();
             disableEditMode();
@@ -409,7 +408,7 @@ public class UserDashboardActivity extends AppCompatActivity {
                         try {
                             String jsonResponse = new String(response.data);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            Log.d("UserDashboard", "PFP upload response: " + jsonResponse); // Keep useful logs
+                            Log.d("UserDashboard", "PFP upload response: " + jsonResponse);
 
                             if (jsonObject.optBoolean("success", false)) {
                                 Toast.makeText(UserDashboardActivity.this, "Profile picture updated successfully", Toast.LENGTH_SHORT).show();
@@ -417,11 +416,11 @@ public class UserDashboardActivity extends AppCompatActivity {
                                 // Keep original error message from PHP response
                                 Toast.makeText(UserDashboardActivity.this, "Failed to upload profile picture: " + jsonObject.optString("message", "Unknown error"), Toast.LENGTH_SHORT).show();
                             }
-                            loadUserDetails(); // Always reload after PFP attempt (success or fail)
-                            disableEditMode(); // Always exit edit mode after PFP attempt
-                            selectedProfilePictureBitmap = null; // Clear bitmap after attempt
+                            loadUserDetails();
+                            disableEditMode();
+                            selectedProfilePictureBitmap = null;
                         } catch (Exception e) {
-                            e.printStackTrace(); // Keep stack trace log for debugging
+                            e.printStackTrace();
                             Toast.makeText(UserDashboardActivity.this, "Error parsing PFP upload response: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             loadUserDetails();
                             disableEditMode();
@@ -432,7 +431,7 @@ public class UserDashboardActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace(); // Keep stack trace log for debugging
+                        error.printStackTrace();
                         String errorMessage = "Error uploading profile picture";
                         if (error.networkResponse != null) {
                             errorMessage += ": Status Code " + error.networkResponse.statusCode;

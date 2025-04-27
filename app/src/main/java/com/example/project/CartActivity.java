@@ -36,7 +36,7 @@ import javax.mail.internet.MimeMessage;
 public class CartActivity extends AppCompatActivity {
 
     private static final String TAG = "CartActivity";
-    private static final String PREF_NAME = "MyAppPrefs"; // Added Preference Name
+    private static final String PREF_NAME = "MyAppPrefs";
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
     private List<CartItem> cartItems = new ArrayList<>();
@@ -44,8 +44,8 @@ public class CartActivity extends AppCompatActivity {
     private TextView emptyCartTextView;
     private Button orderNowButton;
     private Button backButton;
-    private int userId; // Removed initialization = 1
-    private String userEmail = "user@example.com"; // Kept this as it wasn't part of the core issue
+    private int userId;
+    private String userEmail = "user@example.com";
 
     public interface QuantityCheckCallback {
         void onQuantityChecked(boolean isAvailable);
@@ -58,9 +58,8 @@ public class CartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
         Log.d(TAG, "onCreate: setContentView finished");
 
-        // Retrieve User ID from SharedPreferences
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        userId = prefs.getInt("user_id", -1); // Get the stored user ID, default to -1 if not found
+        userId = prefs.getInt("user_id", -1);
 
         if (userId == -1) {
             Log.e(TAG, "User ID not found in SharedPreferences. Cannot proceed with cart.");
@@ -68,8 +67,8 @@ public class CartActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SignIn.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish(); // Close CartActivity as it's unusable without a user ID
-            return; // Stop further execution in onCreate
+            finish();
+            return;
         }
         Log.i(TAG, "onCreate: Successfully retrieved User ID: " + userId);
 
@@ -261,7 +260,6 @@ public class CartActivity extends AppCompatActivity {
                         }.getType());
                         if (map.containsKey("status") && map.get("status").equals("success")) {
                             Toast.makeText(this, "Order placed successfully for seller " + sellerId + "!", Toast.LENGTH_SHORT).show();
-                            // Decrease the quantity in the meals table
                             for (int i = 0; i < mealIdsToDecrease.size(); i++) {
                                 decreaseMealQuantity(mealIdsToDecrease.get(i), quantitiesToDecrease.get(i));
                             }
@@ -283,10 +281,10 @@ public class CartActivity extends AppCompatActivity {
             @Override
             protected java.util.Map<String, String> getParams() {
                 java.util.Map<String, String> params = new java.util.HashMap<>();
-                params.put("buyer_id", String.valueOf(userId)); // Now uses the correct retrieved userId
+                params.put("buyer_id", String.valueOf(userId));
                 params.put("seller_id", String.valueOf(sellerId));
                 params.put("total_price", String.valueOf(finalTotalPrice));
-                params.put("order_items", orderItemsJson); // Send the list of order items as JSON
+                params.put("order_items", orderItemsJson);
                 return params;
             }
         };
@@ -448,7 +446,6 @@ public class CartActivity extends AppCompatActivity {
         }
     }
 
-    // Helper class to send order items to the backend
     private static class OrderItem {
         private int meal_id;
         private int quantity;

@@ -65,7 +65,6 @@ public class EditMealActivity extends AppCompatActivity {
         } else {
             handleDataError("Error: No meal data provided for editing.");
         }
-        // --------------------------------
 
         setupSaveButton();
     }
@@ -194,7 +193,7 @@ public class EditMealActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing update response", e);
                         Toast.makeText(EditMealActivity.this,"Update successful (response parsing issue).", Toast.LENGTH_SHORT).show();
-                        setResult(RESULT_OK); // Assume success if we got a 2xx response
+                        setResult(RESULT_OK);
                         finish();
                     }
                 },
@@ -204,13 +203,12 @@ public class EditMealActivity extends AppCompatActivity {
                 });
 
         requestQueue.add(updateRequest);
-        // -----------------------------
     }
 
     private void showError(TextInputEditText field, String message) {
         field.setError(message);
         field.requestFocus();
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show(); // Also show toast
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 

@@ -25,7 +25,7 @@ import java.util.List;
 public class MealDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "MealDetailActivity";
-    private static final String PREF_NAME = "MyAppPrefs"; // Added Preference Name
+    private static final String PREF_NAME = "MyAppPrefs";
     private ImageView mealImageView;
     private TextView mealNameTextView;
     private TextView mealDescriptionTextView;
@@ -40,7 +40,7 @@ public class MealDetailActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
     private String baseUrl = "http://10.0.2.2/Soufra_Share/";
 
-    private int loggedInUserId; // Removed initialization = 1
+    private int loggedInUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +48,9 @@ public class MealDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meal_detail);
         Log.d(TAG, "onCreate() called");
 
-        // Retrieve User ID from SharedPreferences
+
         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
-        loggedInUserId = prefs.getInt("user_id", -1); // Get the stored user ID
+        loggedInUserId = prefs.getInt("user_id", -1);
 
         if (loggedInUserId == -1) {
             Log.e(TAG, "User ID not found in SharedPreferences. Cannot add to cart.");
@@ -58,8 +58,8 @@ public class MealDetailActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SignIn.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish(); // Close this activity
-            return; // Stop further execution in onCreate
+            finish();
+            return;
         }
         Log.i(TAG, "onCreate: Successfully retrieved User ID: " + loggedInUserId);
 

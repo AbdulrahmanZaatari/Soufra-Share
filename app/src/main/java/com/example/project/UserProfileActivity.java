@@ -134,7 +134,6 @@ public class UserProfileActivity extends AppCompatActivity {
                                 aboutTextView.setText("No about information provided.");
                             }
 
-                            // Load profile picture at the top
                             if (userObject.has("profile_picture") && !userObject.getString("profile_picture").isEmpty()) {
                                 String profilePictureUrl = "http://10.0.2.2/Soufra_Share/" + userObject.getString("profile_picture");
                                 Log.d(TAG, "Loading top profile picture from: " + profilePictureUrl);
@@ -278,10 +277,9 @@ public class UserProfileActivity extends AppCompatActivity {
                             if (!jsonObject.has("error")) {
                                 Toast.makeText(UserProfileActivity.this, "Review submitted successfully!", Toast.LENGTH_SHORT).show();
 
-                                // Create a new Review object
                                 SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-                                String reviewerUsername = "You"; // Or fetch the actual username if available
-                                String reviewerProfilePicture = null; // You might not have this immediately
+                                String reviewerUsername = "You";
+                                String reviewerProfilePicture = null;
 
                                 Review newReview = new Review(
                                         jsonObject.getInt("review_id"),
@@ -290,16 +288,14 @@ public class UserProfileActivity extends AppCompatActivity {
                                         userId,
                                         (int) rating,
                                         comment,
-                                        "Just now", // Or format the current time
+                                        "Just now",
                                         reviewerProfilePicture
                                 );
 
-                                // Add the new review to the list and notify the adapter
-                                reviewList.add(0, newReview); // Add at the beginning to show immediately
+                                reviewList.add(0, newReview);
                                 reviewAdapter.notifyItemInserted(0);
-                                reviewsRecyclerView.scrollToPosition(0); // Scroll to the new review
+                                reviewsRecyclerView.scrollToPosition(0);
 
-                                // Clear the rating and comment fields
                                 ratingBar.setRating(0);
                                 commentEditText.setText("");
                             } else {

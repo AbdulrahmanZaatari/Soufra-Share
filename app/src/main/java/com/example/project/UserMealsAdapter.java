@@ -44,7 +44,7 @@ public class UserMealsAdapter extends RecyclerView.Adapter<UserMealsAdapter.Meal
         holder.mealPriceTextView.setText("$" + String.format("%.2f", currentMeal.getPrice()));
         holder.mealDescriptionTextView.setText(currentMeal.getDescription());
 
-        // Load meal image
+
         String imagePathsJson = currentMeal.getImagePaths();
         if (imagePathsJson != null && !imagePathsJson.isEmpty() && !imagePathsJson.equals("[]")) {
             try {
@@ -58,19 +58,19 @@ public class UserMealsAdapter extends RecyclerView.Adapter<UserMealsAdapter.Meal
                     Log.d("UserMealsAdapter", "Loading meal image from: " + imageUrl);
                     Picasso.get()
                             .load(imageUrl)
-                            .placeholder(R.drawable.sushi) // Replace with your placeholder
-                            .error(R.drawable.sushi)       // Replace with your error image
+                            .placeholder(R.drawable.sushi)
+                            .error(R.drawable.sushi)
                             .into(holder.mealImageView);
                 } else {
-                    holder.mealImageView.setImageResource(R.drawable.sushi); // Default image if no path
+                    holder.mealImageView.setImageResource(R.drawable.sushi);
                 }
 
             } catch (Exception e) {
                 Log.e("UserMealsAdapter", "Error parsing image paths: " + e.getMessage());
-                holder.mealImageView.setImageResource(R.drawable.sushi); // Error fallback image
+                holder.mealImageView.setImageResource(R.drawable.sushi);
             }
         } else {
-            holder.mealImageView.setImageResource(R.drawable.sushi); // Default image if no JSON
+            holder.mealImageView.setImageResource(R.drawable.sushi);
         }
     }
 

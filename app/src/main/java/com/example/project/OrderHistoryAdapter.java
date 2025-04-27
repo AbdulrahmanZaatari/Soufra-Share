@@ -44,7 +44,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         holder.textViewOrderDate.setText("Date: " + currentOrder.getOrderDate());
         holder.textViewTotalPrice.setText("Total: $" + String.format("%.2f", currentOrder.getTotalAmount()));
 
-        String baseUrl = "http://10.0.2.2/Soufra_Share/"; // Your base URL
+        String baseUrl = "http://10.0.2.2/Soufra_Share/";
 
         holder.buttonDownloadReceipt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +60,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             public void onClick(View v) {
                 int orderId = currentOrder.getOrderId();
                 String pdfUrl = baseUrl + "download_receipt.php?order_id=" + orderId;
-                Log.d("OrderHistoryAdapter", "View PDF URL: " + pdfUrl); // Added logging here
+                Log.d("OrderHistoryAdapter", "View PDF URL: " + pdfUrl);
                 Intent intent = new Intent(context, ViewReceiptActivity.class);
                 intent.putExtra("PDF_URL", pdfUrl);
                 context.startActivity(intent);
@@ -94,7 +94,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         public TextView textViewOrderDate;
         public TextView textViewTotalPrice;
         public Button buttonDownloadReceipt;
-        public Button buttonViewReceipt; // Add this
+        public Button buttonViewReceipt;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);

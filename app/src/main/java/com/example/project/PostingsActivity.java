@@ -73,7 +73,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
 
         if (currentUserId == -1) {
             handleUserNotLoggedIn();
-            return; // Stop execution
+            return;
         }
         Log.d(TAG, "Current User ID: " + currentUserId);
 
@@ -147,7 +147,7 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         Log.d(TAG, "Received OK result from Add/Edit Meal Activity. Refreshing postings.");
-                        fetchUserPostings(); // Refresh the list on successful add/edit
+                        fetchUserPostings();
                     } else {
                         Log.d(TAG, "Received Cancel or other result code from Add/Edit Meal Activity.");
                     }
@@ -208,13 +208,13 @@ public class PostingsActivity extends AppCompatActivity implements PostingAdapte
             );
         } catch (Exception e) {
             Log.e(TAG, "Error parsing single meal object: " + mealObject.toString(), e);
-            return null; // Return null if parsing fails
+            return null;
         }
     }
 
 
     private void deletePosting(final Meal meal, final int position) {
-        String url = BASE_URL + "meals.php?meal_id=" + meal.getMealId(); // Append meal_id to the URL
+        String url = BASE_URL + "meals.php?meal_id=" + meal.getMealId();
         Log.d(TAG, "Attempting to delete meal ID: " + meal.getMealId() + " at URL: " + url);
 
         StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, url,

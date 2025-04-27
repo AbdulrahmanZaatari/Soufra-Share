@@ -25,7 +25,7 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
     private Context context;
     private OnPostingActionListener listener;
 
-    private String baseUrl = "http://10.0.2.2/Soufra_Share/"; // <-- Check this URL
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/";
 
     public interface OnPostingActionListener {
         void onEditClick(Meal meal);
@@ -41,9 +41,8 @@ public class PostingAdapter extends RecyclerView.Adapter<PostingAdapter.PostingV
     @NonNull
     @Override
     public PostingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Ensure this matches your layout file name for a single posting item
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_posting_card, parent, false); // <-- Check this layout file name
+                .inflate(R.layout.item_posting_card, parent, false);
         return new PostingViewHolder(view);
     }
 
