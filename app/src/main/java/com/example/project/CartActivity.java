@@ -115,7 +115,7 @@ public class CartActivity extends AppCompatActivity {
         });
         Log.d(TAG, "onCreate: Back button click listener set");
 
-        fetchCartData(userId); // Now uses the retrieved userId
+        fetchCartData(userId);
         Log.d(TAG, "onCreate: fetchCartData called with user ID: " + userId);
     }
 
@@ -387,7 +387,7 @@ public class CartActivity extends AppCompatActivity {
         Log.d(TAG, "deleteItemFromCart: Deleting item with cartId: " + cartId + " from URL: " + url);
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, // Using GET for simplicity, but DELETE might be more appropriate
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     Log.d(TAG, "deleteItemFromCart: Response received: " + response);
                     try {
