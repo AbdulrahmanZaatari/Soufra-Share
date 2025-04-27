@@ -76,7 +76,7 @@ public class SalesReportListActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("user_id", String.valueOf(loggedInUserId)); // Send userId as seller_id
+                params.put("user_id", String.valueOf(loggedInUserId));
                 return params;
             }
         };

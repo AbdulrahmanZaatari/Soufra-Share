@@ -94,24 +94,20 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
 
     @Override
     protected Response<NetworkResponse> parseNetworkResponse(NetworkResponse response) {
-        // This is correct for parsing NetworkResponse
         return Response.success(response, HttpHeaderParser.parseCacheHeaders(response));
     }
 
     @Override
     protected void deliverResponse(NetworkResponse response) {
-        // Deliver the successful response
         mListener.onResponse(response);
     }
 
     @Override
     public void deliverError(VolleyError error) {
-        // Deliver the error response
-        mErrorListener.onErrorResponse(error);
+                mErrorListener.onErrorResponse(error);
     }
 
     // --- DataPart Static Inner Class ---
-    // This inner class seems correct based on your previous code
     public static class DataPart {
         private String fileName;
         private byte[] content;

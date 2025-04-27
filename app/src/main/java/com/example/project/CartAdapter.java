@@ -18,7 +18,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private Context context;
     private List<CartItem> cartItems;
     private OnItemClickListener deleteClickListener;
-    private String baseUrl = "http://10.0.2.2/Soufra_Share/uploads/"; // Base URL for images
+    private String baseUrl = "http://10.0.2.2/Soufra_Share/uploads/"; 
 
     public interface OnItemClickListener {
         void onDeleteClick(int position);

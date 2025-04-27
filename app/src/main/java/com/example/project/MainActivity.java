@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREF_NAME = "MyAppPrefs";
     private static final String KEY_LOGIN_TIMESTAMP = "loginTimestamp";
-    private static final long SESSION_TIMEOUT_MS = TimeUnit.HOURS.toMillis(1); // 1 hour in milliseconds
+    private static final long SESSION_TIMEOUT_MS = TimeUnit.HOURS.toMillis(1);
 
     private RecyclerView ordersRecyclerView;
     private MealAdapter mealAdapter;
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else {
                     Toast.makeText(MainActivity.this, "User ID not found in preferences.", Toast.LENGTH_SHORT).show();
-                    return false; // Or handle this error as needed
+                    return false;
                 }
             }
             return false;
@@ -192,11 +192,11 @@ public class MainActivity extends AppCompatActivity {
                 response -> {
                     Log.d("FetchMeals", "Received response: " + response.length() + " items");
                     try {
-                        originalMealList.clear(); // Clear original list before populating
+                        originalMealList.clear();
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject mealObject = response.getJSONObject(i);
                             Meal meal = parseMeal(mealObject);
-                            originalMealList.add(meal); // Add to the original list
+                            originalMealList.add(meal);
                         }
                         java.util.Collections.sort(originalMealList);
 
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
             String maxPrice = maxPriceEditText.getText().toString().trim();
             updateCurrentPriceFilter(minPrice, maxPrice);
 
-            applyFilters(); // Re-apply filters with new settings
+            applyFilters();
         });
         builder.setNegativeButton("Cancel", null);
         builder.setNeutralButton("Clear Filters", (dialog, which) -> {
@@ -425,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
                             mealList.add(parseMeal(mealObject));
                         }
                         java.util.Collections.sort(mealList);
-                        mealAdapter.notifyDataSetChanged(); // Update the RecyclerView
+                        mealAdapter.notifyDataSetChanged();
                         Log.d("ApplyFilters", "Adapter notified. Displaying " + mealList.size() + " meals.");
                     } catch (JSONException e) {
                         Log.e("ApplyFilters", "JSON parsing error on filtered results", e);
@@ -452,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
                 mealObject.optInt("delivery_option", -1),
                 mealObject.optString("description", ""),
                 mealObject.optString("image_paths", ""),
-                mealObject.optString("created_at", ""), // Set the created_at field
+                mealObject.optString("created_at", ""),
                 mealObject.optString("username", "Unknown User"),
                 mealObject.optString("profile_picture", ""),
                 mealObject.optDouble("rating", 0.0)
@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
         return meal;
     }
 
-    // --- Inner class for Tag ---
+
     private static class Tag {
         private final int tagId;
         private final String name;

@@ -55,7 +55,7 @@ public class SignUp extends AppCompatActivity {
     private String uploadedProfilePicturePath;
 
     private static final int STORAGE_PERMISSION_CODE = 101;
-    private static final String TAG = "SignUpActivity"; // Added a TAG for logging
+    private static final String TAG = "SignUpActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
-    // Function to check and request permission
+
     private void checkPermission(String permission, int requestCode) {
         String permissionToCheck = permission;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -120,7 +120,6 @@ public class SignUp extends AppCompatActivity {
             Log.d(TAG, "Requesting storage permission: " + permissionToCheck);
             ActivityCompat.requestPermissions(SignUp.this, new String[]{permissionToCheck}, requestCode);
         } else {
-            // Permission already granted
             Log.d(TAG, "Storage permission (" + permissionToCheck + ") is already GRANTED");
             openFileChooser();
         }
@@ -158,7 +157,7 @@ public class SignUp extends AppCompatActivity {
             profileImageUri = data.getData();
             Log.d(TAG, "Image selected. URI: " + profileImageUri);
             Picasso.get().load(profileImageUri).into(profileImageView);
-            uploadProfilePicture(); // Automatically upload the selected image
+            uploadProfilePicture();
         }
     }
 
@@ -215,9 +214,8 @@ public class SignUp extends AppCompatActivity {
                 } else if (mimeType.equals("image/gif")) {
                     extension = ".gif";
                 }
-                // Add other image types as needed
             } else {
-                extension = ".jpg"; // Default extension if MIME type is null
+                extension = ".jpg";
             }
 
             String fullFilename = filename + extension;
@@ -255,7 +253,7 @@ public class SignUp extends AppCompatActivity {
         final String nationalId = edNationalId.getText().toString().trim();
         final String birthData = edBirthData.getText().toString().trim();
         final String phoneNum = edPhoneNum.getText().toString().trim();
-        final String profilePicture = uploadedProfilePicturePath; // Use the uploaded path
+        final String profilePicture = uploadedProfilePicturePath;
 
         if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || location.isEmpty() || nationalId.isEmpty() || birthData.isEmpty() || phoneNum.isEmpty()) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();

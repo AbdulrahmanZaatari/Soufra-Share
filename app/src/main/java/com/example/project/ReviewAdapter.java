@@ -37,18 +37,16 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
         Review review = reviewList.get(position);
 
-        // Set reviewer's username, rating, comment, and review date
         holder.reviewerUsernameTextView.setText(review.getReviewerUsername());
         holder.ratingBar.setRating(review.getRating());
         holder.commentTextView.setText(review.getComment());
         holder.reviewDateTextView.setText(review.getReviewDate());
 
-        // Load the reviewer's profile image using Picasso
         String profilePictureUrl = review.getReviewerProfilePicture();
         if (profilePictureUrl != null && !profilePictureUrl.isEmpty()) {
             Picasso.get()
                     .load("http://10.0.2.2/Soufra_Share/" + profilePictureUrl)
-                    .placeholder(R.drawable.ic_person)  // Replace with your placeholder image if needed
+                    .placeholder(R.drawable.ic_person)
                     .error(R.drawable.ic_person)
                     .into(holder.reviewerProfileImageView);
         } else {
@@ -70,7 +68,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Use the exact IDs defined in your item_review.xml layout
             reviewerProfileImageView = itemView.findViewById(R.id.image_view_reviewer_profile);
             reviewerUsernameTextView = itemView.findViewById(R.id.text_view_reviewer_username);
             ratingBar = itemView.findViewById(R.id.rating_bar_review);

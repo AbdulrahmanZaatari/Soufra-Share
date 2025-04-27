@@ -2,6 +2,7 @@ package com.example.project;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +36,7 @@ import javax.mail.internet.MimeMessage;
 public class CartActivity extends AppCompatActivity {
 
     private static final String TAG = "CartActivity";
+    private static final String PREF_NAME = "MyAppPrefs";
     private RecyclerView cartRecyclerView;
     private CartAdapter cartAdapter;
     private List<CartItem> cartItems = new ArrayList<>();
@@ -42,7 +44,7 @@ public class CartActivity extends AppCompatActivity {
     private TextView emptyCartTextView;
     private Button orderNowButton;
     private Button backButton;
-    private int userId = 1;
+    private int userId;
     private String userEmail = "user@example.com";
 
     public interface QuantityCheckCallback {
@@ -55,6 +57,21 @@ public class CartActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting onCreate");
         setContentView(R.layout.activity_cart);
         Log.d(TAG, "onCreate: setContentView finished");
+
+        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        userId = prefs.getInt("user_id", -1);
+
+        if (userId == -1) {
+            Log.e(TAG, "User ID not found in SharedPreferences. Cannot proceed with cart.");
+            Toast.makeText(this, "Error: You seem to be logged out. Please sign in again.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, SignIn.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        Log.i(TAG, "onCreate: Successfully retrieved User ID: " + userId);
+
 
         backButton = findViewById(R.id.back_button);
         Log.d(TAG, "onCreate: backButton found: " + (backButton != null));
@@ -98,8 +115,8 @@ public class CartActivity extends AppCompatActivity {
         });
         Log.d(TAG, "onCreate: Back button click listener set");
 
-        fetchCartData(userId);
-        Log.d(TAG, "onCreate: fetchCartData called");
+        fetchCartData(userId); // Now uses the retrieved userId
+        Log.d(TAG, "onCreate: fetchCartData called with user ID: " + userId);
     }
 
     private void showConfirmationDialog() {
@@ -243,7 +260,6 @@ public class CartActivity extends AppCompatActivity {
                         }.getType());
                         if (map.containsKey("status") && map.get("status").equals("success")) {
                             Toast.makeText(this, "Order placed successfully for seller " + sellerId + "!", Toast.LENGTH_SHORT).show();
-                            // Decrease the quantity in the meals table
                             for (int i = 0; i < mealIdsToDecrease.size(); i++) {
                                 decreaseMealQuantity(mealIdsToDecrease.get(i), quantitiesToDecrease.get(i));
                             }
@@ -268,7 +284,7 @@ public class CartActivity extends AppCompatActivity {
                 params.put("buyer_id", String.valueOf(userId));
                 params.put("seller_id", String.valueOf(sellerId));
                 params.put("total_price", String.valueOf(finalTotalPrice));
-                params.put("order_items", orderItemsJson); // Send the list of order items as JSON
+                params.put("order_items", orderItemsJson);
                 return params;
             }
         };
@@ -276,6 +292,7 @@ public class CartActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
         Log.d(TAG, "placeOrderForSeller: Request added to queue for seller ID: " + sellerId);
     }
+
 
     private void checkMealQuantity(int mealId, int quantity, QuantityCheckCallback callback) {
         String url = "http://10.0.2.2/Soufra_Share/check_meal_quantity.php?meal_id=" + mealId + "&quantity=" + quantity;
@@ -429,7 +446,6 @@ public class CartActivity extends AppCompatActivity {
         }
     }
 
-    // Helper class to send order items to the backend
     private static class OrderItem {
         private int meal_id;
         private int quantity;
