@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -11,23 +12,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:padding="12dp">
-
-        <!-- Profile Image -->
-        <ImageView
-            android:id="@+id/image_view_reviewer_profile"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_person" />
+      >
 
         <!-- Right Section: Username, Rating, Comment, Date -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="85dp"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/image_view_reviewer_profile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="center"
+                tools:srcCompat="@tools:sample/avatars" />
+        </androidx.cardview.widget.CardView>
+
+
+
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:padding="12dp"
             android:orientation="vertical">
 
             <TextView
@@ -36,8 +46,9 @@
                 android:layout_height="wrap_content"
                 android:text="Reviewer Username"
                 android:textStyle="bold"
-                android:textSize="14sp"
-                android:textColor="@android:color/black" />
+                android:fontFamily="cursive"
+                android:textSize="18sp"
+                android:textColor="@color/black" />
 
             <!-- A smaller RatingBar style -->
             <RatingBar
@@ -55,7 +66,8 @@
                 android:layout_height="wrap_content"
                 android:text="Review comment"
                 android:textColor="@android:color/black"
-                android:textSize="13sp"
+                android:textSize="14sp"
+
                 android:layout_marginTop="4dp" />
 
             <TextView
