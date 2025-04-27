@@ -4,12 +4,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="15dp"
+
+    app:cardElevation="10dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+
         android:orientation="vertical"
         android:padding="8dp">
 
@@ -18,14 +20,20 @@
             android:layout_width="150dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/sushi" /> <TextView
-        android:id="@+id/mealNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Meal Name"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+            android:src="@drawable/sushi" />
+
+        <TextView
+            android:id="@+id/mealNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Meal Name"
+            android:fontFamily="casual"
+            android:textColor="@color/black"
+
+
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/mealPriceTextView"
@@ -33,17 +41,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="$10.00"
+            android:textColor="@color/black"
             android:textSize="14sp" />
 
         <TextView
             android:id="@+id/mealDescriptionTextView"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:maxLines="2"
             android:ellipsize="end"
             android:text="Short description..."
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 

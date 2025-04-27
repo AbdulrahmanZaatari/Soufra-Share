@@ -104,17 +104,18 @@
         android:id="@+id/empty_cart_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your Cart is Empty"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:fontFamily="cursive"
+        android:layout_marginStart="116dp"
         android:background="@drawable/textview_border"
+        android:fontFamily="cursive"
         android:padding="10dp"
+        android:text="Your Cart is Empty"
+        android:textSize="25sp"
 
+        android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/cart_recycler_view"
-        app:layout_constraintBottom_toBottomOf="@+id/cart_recycler_view"
-        app:layout_constraintStart_toStartOf="@+id/cart_recycler_view"
-        app:layout_constraintEnd_toEndOf="@+id/cart_recycler_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/total_price_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cart_title"
+        app:layout_constraintVertical_bias="0.506" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -80,8 +80,7 @@
                     <TextView
                         android:id="@+id/text_view_posting_price"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
+                        android:layout_height="41dp"
                         android:fontFamily="cursive"
                         android:gravity="center"
                         android:padding="5dp"
@@ -95,7 +94,6 @@
                         android:id="@+id/text_view_posting_quantity"
                         android:layout_width="83dp"
                         android:layout_height="41dp"
-                        android:layout_marginStart="20dp"
                         android:fontFamily="casual"
                         android:gravity="center"
                         android:padding="5dp"
@@ -109,7 +107,6 @@
                         android:id="@+id/button_delete_posting"
                         android:layout_width="40dp"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="10dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="delete"
                         android:src="@drawable/deletemini" />
