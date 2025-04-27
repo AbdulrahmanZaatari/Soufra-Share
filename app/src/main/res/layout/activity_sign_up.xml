@@ -8,21 +8,23 @@
     android:background="@drawable/bg2"
     tools:context=".SignUp">
 
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="30dp"
+        android:layout_margin="16dp"
         app:cardBackgroundColor="@color/orangeLighter"
         app:cardCornerRadius="20dp"
-        app:cardElevation="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:cardElevation="5dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -230,7 +232,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="140dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="30dp"
                 android:backgroundTint="@color/white"
                 android:fontFamily="casual"
                 android:gravity="center"
@@ -241,4 +243,5 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
