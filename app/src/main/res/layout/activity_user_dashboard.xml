@@ -32,9 +32,17 @@
 
 
             <LinearLayout
+<<<<<<< HEAD
                 android:layout_width="351dp"
                 android:layout_height="203dp"
                 android:layout_margin="15dp">
+=======
+                android:layout_width="352dp"
+                android:layout_height="197dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp">
+
+>>>>>>> 1859adeaa214d08f73d6573104568893192c7413
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="175dp"
@@ -63,7 +71,7 @@
 
                 <LinearLayout
                     android:layout_width="204dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="197dp"
                     android:orientation="vertical">
 
 
@@ -90,7 +98,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            tools:text="johndoe" />
+                            tools:text="johndoe"
+                            />
 
                         <EditText
                             android:id="@+id/edit_text_username"
@@ -99,7 +108,10 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:ems="10"
+<<<<<<< HEAD
                             android:hint="@string/enteruname"
+=======
+>>>>>>> 1859adeaa214d08f73d6573104568893192c7413
                             android:inputType="textPersonName"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
@@ -130,7 +142,8 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             app:layout_constraintEnd_toEndOf="parent"
-                            tools:text="John Doe" />
+                            tools:text="John Doe"
+                        />
 
                         <EditText
                             android:id="@+id/edit_text_full_name"
@@ -167,7 +180,8 @@
                             android:layout_height="match_parent"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            tools:text="john.doe@example.com" />
+                            tools:text="john.doe@example.com"
+                            />
 
                         <EditText
                             android:id="@+id/edit_text_email"
@@ -187,7 +201,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="5dp"
+
                         android:orientation="horizontal">
 
                         <TextView
@@ -207,7 +222,8 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
 
-                            tools:text="03123456" />
+                            tools:text="03123456"
+                           />
 
                         <EditText
                             android:id="@+id/edit_text_phone"
@@ -228,7 +244,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="5dp"
+
                         android:orientation="horizontal">
 
                         <TextView
@@ -238,7 +255,8 @@
                             android:fontFamily="casual"
                             android:text="Location:"
                             android:textColor="@color/black"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            />
 
                         <TextView
                             android:id="@+id/text_location"
@@ -247,11 +265,15 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             tools:text="Beirut"
+<<<<<<< HEAD
                              />
+=======
+                            />
+>>>>>>> 1859adeaa214d08f73d6573104568893192c7413
 
                         <EditText
                             android:id="@+id/edit_text_location"
-                            android:layout_width="wrap_content"
+                            android:layout_width="110dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
