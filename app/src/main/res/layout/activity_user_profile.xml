@@ -59,7 +59,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="casual"
-                            android:text="@string/username"
+                            android:text="Username: "
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -83,7 +83,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="casual"
-                            android:text="@string/full_name2"
+                            android:text="Full name: "
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -106,7 +106,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="casual"
-                            android:text="@string/location2"
+                            android:text="Location: "
                             android:textColor="@color/black"
                             android:textSize="16sp"
 

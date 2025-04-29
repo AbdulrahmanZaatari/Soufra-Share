@@ -94,6 +94,7 @@ public class SignIn extends AppCompatActivity {
                                             return;
                                         }
                                         int userId = response.getInt("user_id");
+                                        String profilePicUrl = response.optString("profile_picture", null);
                                         Log.i("SignIn", "Sign-in successful for user ID: " + userId);
                                         Toast.makeText(SignIn.this, message, Toast.LENGTH_SHORT).show();
                                         SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
@@ -101,6 +102,9 @@ public class SignIn extends AppCompatActivity {
                                         long loginTime = System.currentTimeMillis();
                                         editor.putLong(KEY_LOGIN_TIMESTAMP, loginTime);
                                         editor.putInt("user_id", userId);
+                                        if (profilePicUrl != null) {
+                                            editor.putString("profile_picture_url", profilePicUrl);
+                                        }
                                         editor.apply();
                                         Log.d("SignIn", "Saved login timestamp: " + loginTime + ", User ID: " + userId);
                                         Intent intent = new Intent(SignIn.this, MainActivity.class);

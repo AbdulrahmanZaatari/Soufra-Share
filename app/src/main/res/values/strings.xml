@@ -89,6 +89,8 @@
     <string name="date_2025_04_13">Date: 2025-04-13</string>
     <string name="total_sales_370_00">Total Sales: $370.00</string>
     <string name="download_pdf">Download PDF</string>
+    <string name="username_">Username:</string>
+    <string name="full_name_">Full name:</string>
 
 
 </resources>

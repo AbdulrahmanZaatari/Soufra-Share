@@ -27,17 +27,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="294dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_width="351dp"
+                android:layout_height="203dp"
                 android:layout_margin="15dp">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="161dp"
+                    android:layout_width="175dp"
                     android:layout_height="175dp"
                     app:cardCornerRadius="10dp">
 
@@ -98,11 +98,11 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
+                            android:ems="10"
+                            android:hint="@string/enteruname"
+                            android:inputType="textPersonName"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
-                            android:ems="10"
-                            android:inputType="textPersonName"
-                            android:hint="@string/enteruname"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -139,9 +139,9 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:ems="10"
+                            android:inputType="textPersonName"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
-                            android:inputType="textPersonName"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -176,9 +176,9 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:ems="10"
+                            android:inputType="textEmailAddress"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
-                            android:inputType="textEmailAddress"
                             android:visibility="gone" />
 
 
@@ -216,9 +216,9 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:ems="10"
+                            android:inputType="phone"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
-                            android:inputType="phone"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -246,7 +246,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            tools:text="Beirut" />
+                            tools:text="Beirut"
+                             />
 
                         <EditText
                             android:id="@+id/edit_text_location"
@@ -255,9 +256,9 @@
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
                             android:ems="10"
+                            android:inputType="text"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
-                            android:inputType="text"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -396,7 +397,6 @@
         android:layout_width="390dp"
         android:layout_height="68dp"
         android:layout_marginStart="11dp"
-
         android:layout_marginEnd="11dp"
         android:layout_marginBottom="6dp"
         android:orientation="horizontal"

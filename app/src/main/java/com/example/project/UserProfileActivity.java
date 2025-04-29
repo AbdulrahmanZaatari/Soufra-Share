@@ -115,6 +115,10 @@ public class UserProfileActivity extends AppCompatActivity {
             finish();
         }
     }
+    protected void onResume() {
+        super.onResume();
+        loadUserReviews();
+    }
 
     private void loadUserProfile() {
         String url = URL_USERS + userId;
@@ -279,7 +283,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
                                 SharedPreferences sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
                                 String reviewerUsername = "You";
-                                String reviewerProfilePicture = null;
+                                String reviewerProfilePicture = sharedPreferences.getString("profile_picture_url", null);;
 
                                 Review newReview = new Review(
                                         jsonObject.getInt("review_id"),

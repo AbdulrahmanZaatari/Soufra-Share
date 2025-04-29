@@ -1,4 +1,3 @@
-// SignUp.java
 package com.example.project;
 
 import android.Manifest;
@@ -29,7 +28,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
@@ -48,11 +46,9 @@ public class SignUp extends AppCompatActivity {
     private Button btnSignUp, btnSelectProfileImage;
     private ImageView profileImageView;
     private RequestQueue requestQueue;
-    private static final String URL_SIGNUP = "http://10.0.2.2/Soufra_Share/users.php";
-    private static final String URL_UPLOAD = "http://10.0.2.2/Soufra_Share/upload_profile_picture.php";
+    private static final String SIGNUP_URL = "http://10.0.2.2/Soufra_Share/signup.php";
     private static final int PICK_IMAGE_REQUEST = 1;
     private Uri profileImageUri;
-    private String uploadedProfilePicturePath;
 
     private static final int STORAGE_PERMISSION_CODE = 101;
     private static final String TAG = "SignUpActivity";
@@ -82,67 +78,31 @@ public class SignUp extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(this);
 
-        btnSelectProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Select Profile Image button clicked");
-                checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, STORAGE_PERMISSION_CODE);
-            }
-        });
+        btnSelectProfileImage.setOnClickListener(v -> checkPermission());
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signUpUser();
-            }
-        });
+        btnSignUp.setOnClickListener(v -> signUpUser());
     }
 
-
-    private void checkPermission(String permission, int requestCode) {
-        String permissionToCheck = permission;
+    private void checkPermission() {
+        String permission = Manifest.permission.READ_EXTERNAL_STORAGE;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            permissionToCheck = Manifest.permission.READ_MEDIA_IMAGES;
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
         }
-        Log.d(TAG, "checkPermission called with permission: " + permissionToCheck + ", requestCode: " + requestCode);
-        if (ContextCompat.checkSelfPermission(SignUp.this, permissionToCheck) == PackageManager.PERMISSION_DENIED) {
-            Log.d(TAG, "Storage permission (" + permissionToCheck + ") is NOT granted");
-            if (ActivityCompat.shouldShowRequestPermissionRationale(SignUp.this, permissionToCheck)) {
-                Log.d(TAG, "Should show request permission rationale for " + permissionToCheck);
-                // Explain to the user why we need the permission
-                Toast.makeText(SignUp.this, "Storage permission is needed to select a profile picture.", Toast.LENGTH_LONG).show();
+
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            openFileChooser();
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                Toast.makeText(this, "Storage permission is needed to select a profile picture.", Toast.LENGTH_LONG).show();
             } else {
-                Log.d(TAG, "Should NOT show request permission rationale for " + permissionToCheck + " (likely denied with 'Don't ask again')");
-                Toast.makeText(SignUp.this, "Storage permission is disabled. Please enable it in the app settings to select a profile picture.", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", getPackageName(), null));
                 startActivity(intent);
             }
-            Log.d(TAG, "Requesting storage permission: " + permissionToCheck);
-            ActivityCompat.requestPermissions(SignUp.this, new String[]{permissionToCheck}, requestCode);
-        } else {
-            Log.d(TAG, "Storage permission (" + permissionToCheck + ") is already GRANTED");
-            openFileChooser();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult called with requestCode: " + requestCode);
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Storage Permission has been GRANTED by the user");
-                Toast.makeText(SignUp.this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
-                openFileChooser();
-            } else {
-                Log.d(TAG, "Storage Permission has been DENIED by the user");
-                Toast.makeText(SignUp.this, "Storage Permission Denied. You won't be able to select a profile picture.", Toast.LENGTH_SHORT).show();
-            }
+            ActivityCompat.requestPermissions(this, new String[]{permission}, STORAGE_PERMISSION_CODE);
         }
     }
 
     private void openFileChooser() {
-        Log.d(TAG, "openFileChooser called");
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -152,90 +112,15 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult called with requestCode: " + requestCode + ", resultCode: " + resultCode);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             profileImageUri = data.getData();
-            Log.d(TAG, "Image selected. URI: " + profileImageUri);
             Picasso.get().load(profileImageUri).into(profileImageView);
-            uploadProfilePicture();
         }
     }
 
-    private void uploadProfilePicture() {
-        Log.d(TAG, "uploadProfilePicture called");
-        if (profileImageUri == null) {
-            Toast.makeText(this, "Please select a profile image first.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, URL_UPLOAD,
-                new Response.Listener<NetworkResponse>() {
-                    @Override
-                    public void onResponse(NetworkResponse response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(new String(response.data));
-                            if (jsonObject.getBoolean("success")) {
-                                Toast.makeText(SignUp.this, jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-                                uploadedProfilePicturePath = jsonObject.getString("file_path");
-                                Log.d(TAG, "Profile picture uploaded successfully. Path: " + uploadedProfilePicturePath);
-                            } else {
-                                Toast.makeText(SignUp.this, jsonObject.getString("message"), Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, "Profile picture upload failed on server: " + jsonObject.getString("message"));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(SignUp.this, "Error parsing upload response: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e(TAG, "Error parsing upload response: " + e.getMessage());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        Toast.makeText(SignUp.this, "Profile picture upload failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Volley Error during profile picture upload: " + error.toString());
-                    }
-                });
-
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(profileImageUri);
-            byte[] imgData = getBytes(inputStream);
-            String mimeType = getContentResolver().getType(profileImageUri);
-
-            String filename = "profile_" + System.currentTimeMillis();
-            String extension = "";
-
-            if (mimeType != null) {
-                if (mimeType.equals("image/jpeg")) {
-                    extension = ".jpg";
-                } else if (mimeType.equals("image/png")) {
-                    extension = ".png";
-                } else if (mimeType.equals("image/gif")) {
-                    extension = ".gif";
-                }
-            } else {
-                extension = ".jpg";
-            }
-
-            String fullFilename = filename + extension;
-
-            volleyMultipartRequest.addFile("profile_image", fullFilename, imgData, mimeType);
-            Log.d(TAG, "Added file to multipart request with filename: " + fullFilename);
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "Error getting image data: " + e.getMessage());
-            Toast.makeText(this, "Error reading image file", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        requestQueue.add(volleyMultipartRequest);
-    }
-
-    public byte[] getBytes(InputStream inputStream) throws IOException {
+    private byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
+        byte[] buffer = new byte[1024];
         int len;
         while ((len = inputStream.read(buffer)) != -1) {
             byteBuffer.write(buffer, 0, len);
@@ -244,7 +129,11 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void signUpUser() {
-        Log.d(TAG, "signUpUser called");
+        if (profileImageUri == null) {
+            Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         final String fullName = edFullName.getText().toString().trim();
         final String username = edUsername.getText().toString().trim();
         final String email = edEmail.getText().toString().trim();
@@ -253,58 +142,56 @@ public class SignUp extends AppCompatActivity {
         final String nationalId = edNationalId.getText().toString().trim();
         final String birthData = edBirthData.getText().toString().trim();
         final String phoneNum = edPhoneNum.getText().toString().trim();
-        final String profilePicture = uploadedProfilePicturePath;
 
-        if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || location.isEmpty() || nationalId.isEmpty() || birthData.isEmpty() || phoneNum.isEmpty()) {
+        if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() ||
+                location.isEmpty() || nationalId.isEmpty() || birthData.isEmpty() || phoneNum.isEmpty()) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Map<String, String> params = new HashMap<>();
-        params.put("full_name", fullName);
-        params.put("username", username);
-        params.put("email", email);
-        params.put("password", password);
-        params.put("location", location);
-        params.put("national_id", nationalId);
-        params.put("birth_data", birthData);
-        params.put("phone_num", phoneNum);
-        params.put("is_cook", "0"); // Default value
-        if (profilePicture != null && !profilePicture.isEmpty()) {
-            params.put("profile_picture", profilePicture);
-            Log.d(TAG, "Including profile picture path in signup request: " + profilePicture);
-        }
-
-        JSONObject jsonObject = new JSONObject(params);
-        Log.d(TAG, "Signup JSON object: " + jsonObject.toString());
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL_SIGNUP, jsonObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String message = response.getString("message");
-                            Toast.makeText(SignUp.this, message, Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "Signup successful. Response message: " + message);
-                            startActivity(new Intent(SignUp.this, SignIn.class)); // Replace with your login activity
+        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, SIGNUP_URL,
+                response -> {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(new String(response.data));
+                        if (jsonResponse.getBoolean("success")) {
+                            Toast.makeText(SignUp.this, jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(SignUp.this, SignIn.class));
                             finish();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(SignUp.this, "Error parsing response: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e(TAG, "Error parsing signup response: " + e.getMessage());
+                        } else {
+                            Toast.makeText(SignUp.this, jsonResponse.getString("message"), Toast.LENGTH_LONG).show();
                         }
+                    } catch (JSONException e) {
+                        Toast.makeText(SignUp.this, "Error parsing response", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        Toast.makeText(SignUp.this, "Sign up failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Signup failed: " + error.getMessage());
-                        Log.e(TAG, "Volley Error: " + error.toString());
-                    }
+                error -> {
+                    Toast.makeText(SignUp.this, "Signup failed: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Volley error: " + error.getMessage());
                 });
 
-        requestQueue.add(request);
+        // Add all form fields as string params
+        multipartRequest.addStringParam("full_name", fullName);
+        multipartRequest.addStringParam("username", username);
+        multipartRequest.addStringParam("email", email);
+        multipartRequest.addStringParam("password", password);
+        multipartRequest.addStringParam("location", location);
+        multipartRequest.addStringParam("national_id", nationalId);
+        multipartRequest.addStringParam("birth_data", birthData);
+        multipartRequest.addStringParam("phone_num", phoneNum);
+        multipartRequest.addStringParam("is_cook", "0");
+
+        // Add profile image
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(profileImageUri);
+            byte[] fileData = getBytes(inputStream);
+            String mimeType = getContentResolver().getType(profileImageUri);
+            String fileName = "profile_" + System.currentTimeMillis() + ".jpg";
+            multipartRequest.addFile("profile_image", fileName, fileData, mimeType);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        requestQueue.add(multipartRequest);
     }
 }
